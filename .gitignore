@@ -2,6 +2,7 @@
 .vscode/
 bin/
 obj/
+build/
 *.sln
 *.vcxproj
 *.vcxproj.filters
