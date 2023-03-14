@@ -1,3 +1,4 @@
+#include <Magma/pch.h>
 #include <Magma/Core/Application.h>
 
 namespace Magma
