@@ -1,6 +1,5 @@
 #include <Magma/pch.h>
 #include <Magma/Core/Application.h>
-#include <gtest/gtest.h>
 
 namespace Magma
 {
