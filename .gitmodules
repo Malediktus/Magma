@@ -1,10 +1,9 @@
 [submodule "Magma/vendor/easy_profiler"]
 	path = Magma/vendor/easy_profiler
 	url = https://github.com/yse/easy_profiler/
-[submodule "Magma/vendor/bdwgc"]
-	path = Magma/vendor/bdwgc
-	url = https://github.com/ivmai/bdwgc
-	branch = release-8_2
 [submodule "Magma/vendor/googletest"]
 	path = Magma/vendor/googletest
 	url = https://github.com/google/googletest
+[submodule "Magma/vendor/spdlog"]
+	path = Magma/vendor/spdlog
+	url = https://github.com/gabime/spdlog
