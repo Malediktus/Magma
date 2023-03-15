@@ -1,4 +1,4 @@
-project(Sandbox VERSION 0.0.1 DESCRIPTION "The Test Playground for Magma")
+project(Client VERSION 0.0.1 DESCRIPTION "The Test Playground for Magma")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fdeclspec -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fdeclspec -fPIC")

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <gc_cpp.h>
+
 namespace Magma
 {
-	class Application
+	class Application : public gc
 	{
 	public:
 		Application() = default;
