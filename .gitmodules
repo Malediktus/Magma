@@ -5,3 +5,6 @@
 	path = Magma/vendor/bdwgc
 	url = https://github.com/ivmai/bdwgc
 	branch = release-8_2
+[submodule "Magma/vendor/googletest"]
+	path = Magma/vendor/googletest
+	url = https://github.com/google/googletest
