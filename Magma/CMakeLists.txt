@@ -1,5 +1,7 @@
 project(Magma VERSION 0.0.1 DESCRIPTION "The Magma Game Engine Library")
 
+add_subdirectory(vendor/easy_profiler)
+
 add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h
@@ -18,3 +20,4 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(${PROJECT_NAME} easy_profiler)
