@@ -21,7 +21,9 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -54,7 +56,9 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

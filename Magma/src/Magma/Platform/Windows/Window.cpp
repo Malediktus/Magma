@@ -1,6 +1,6 @@
 #include <Magma/pch.h>
 
-#ifdef MG_PLATFORM_APPLE
+#ifdef MG_PLATFORM_WINDOWS
 
 #include <Magma/Event/Event.h>
 #include <Magma/Core/Window.h>
@@ -12,10 +12,10 @@
 
 namespace Magma
 {
-    class MacWindow : public Window
+    class WindowsWindow : public Window
     {
     public:
-        MacWindow(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+        WindowsWindow(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height)
             : mTitle(title), mWidth(width), mHeight(height)
         {
             glfwInit();
@@ -30,7 +30,7 @@ namespace Magma
             glfwSetScrollCallback(mWindow, ScrollCallback);
         }
 
-        ~MacWindow()
+        ~WindowsWindow()
         {
             glfwDestroyWindow(mWindow);
             glfwTerminate();
@@ -149,7 +149,7 @@ namespace Magma
 
     std::shared_ptr<Window> WindowCreate(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height)
     {
-        return std::shared_ptr<Window>(new MacWindow(title, x, y, width, height));
+        return std::shared_ptr<Window>(new WindowsWindow(title, x, y, width, height));
     }
 }
 
