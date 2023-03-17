@@ -14,6 +14,9 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -40,6 +43,9 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

@@ -9,7 +9,7 @@ namespace Magma
         EASY_FUNCTION(profiler::colors::Red);
         Logger::Init();
         OnInit();
-        while (mRunning)
+        while (m_Running)
             ;
         OnShutdown();
     }

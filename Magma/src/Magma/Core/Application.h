@@ -15,7 +15,7 @@ namespace Magma
 		virtual void OnUpdate() = 0;
 
 	private:
-		bool mRunning;
+		bool m_Running;
 	};
 
 	Application *CreateApplication();
