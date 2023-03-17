@@ -19,7 +19,9 @@ namespace Magma
             : mTitle(title), mWidth(width), mHeight(height)
         {
             glfwInit();
+#ifndef MG_OPENGL
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
             mWindow = glfwCreateWindow(mWidth, mHeight, title, nullptr, nullptr);
 
             glfwSetKeyCallback(mWindow, KeyCallback);
