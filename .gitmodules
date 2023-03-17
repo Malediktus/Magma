@@ -7,3 +7,6 @@
 [submodule "Magma/vendor/spdlog"]
 	path = Magma/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Magma/vendor/glfw"]
+	path = Magma/vendor/glfw
+	url = https://github.com/glfw/glfw
