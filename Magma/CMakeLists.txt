@@ -37,7 +37,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} easy_profiler spdlog glfw)
+target_link_libraries(${PROJECT_NAME} easy_profiler spdlog glfw ImGui)
 
 project(MagmaTest VERSION 0.0.1 DESCRIPTION "Tests for the Magma Game Engine Library")
 
@@ -76,6 +76,27 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} easy_profiler gtest spdlog glfw)
+target_link_libraries(${PROJECT_NAME} easy_profiler gtest spdlog glfw ImGui)
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
+
+add_library(${PROJECT_NAME} STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imconfig.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_draw.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_widgets.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_rectpack.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_textedit.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_truetype.h
+    
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_opengl3.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_opengl3.h
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+target_link_libraries(${PROJECT_NAME} glfw)

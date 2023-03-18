@@ -10,3 +10,7 @@
 [submodule "Magma/vendor/glfw"]
 	path = Magma/vendor/glfw
 	url = https://github.com/glfw/glfw
+[submodule "Magma/vendor/imgui"]
+	path = Magma/vendor/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking
