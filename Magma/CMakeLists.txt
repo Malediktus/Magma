@@ -22,8 +22,11 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -51,14 +54,18 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Window.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Input.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
