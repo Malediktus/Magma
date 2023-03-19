@@ -14,3 +14,6 @@
 	path = Magma/vendor/imgui
 	url = https://github.com/ocornut/imgui
 	branch = docking
+[submodule "Magma/vendor/glm"]
+	path = Magma/vendor/glm
+	url = https://github.com/g-truc/glm
