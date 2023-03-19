@@ -29,6 +29,12 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -68,6 +74,12 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
