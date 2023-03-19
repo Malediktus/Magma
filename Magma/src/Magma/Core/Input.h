@@ -17,6 +17,6 @@ namespace Magma
         static std::pair<int, int> GetMousePos();
 
     private:
-        static void *mWindowEventHandle; // void* because it differs on platforms
+        static void *m_WindowEventHandle; // void* because it differs on platforms
     };
 }

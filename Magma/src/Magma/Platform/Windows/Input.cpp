@@ -7,24 +7,24 @@
 
 namespace Magma
 {
-    void* Input::mWindowEventHandle = nullptr;
+    void *Input::m_WindowEventHandle = nullptr;
 
-    void Input::Init(void* WindowEventHandle)
+    void Input::Init(void *WindowEventHandle)
     {
-        mWindowEventHandle = WindowEventHandle;
+        m_WindowEventHandle = WindowEventHandle;
     }
 
     bool Input::GetKey(KeyCode key)
     {
         // TODO: Translate keycode
-        return glfwGetKey((GLFWwindow*)mWindowEventHandle, key) == GLFW_PRESS;
+        return glfwGetKey((GLFWwindow *)m_WindowEventHandle, key) == GLFW_PRESS;
     }
 
     int Input::GetMouseX()
     {
         double x;
         double y;
-        glfwGetCursorPos((GLFWwindow*)mWindowEventHandle, &x, &y);
+        glfwGetCursorPos((GLFWwindow *)m_WindowEventHandle, &x, &y);
         return x;
     }
 
@@ -32,7 +32,7 @@ namespace Magma
     {
         double x;
         double y;
-        glfwGetCursorPos((GLFWwindow*)mWindowEventHandle, &x, &y);
+        glfwGetCursorPos((GLFWwindow *)m_WindowEventHandle, &x, &y);
         return y;
     }
 
@@ -40,7 +40,7 @@ namespace Magma
     {
         double x;
         double y;
-        glfwGetCursorPos((GLFWwindow*)mWindowEventHandle, &x, &y);
+        glfwGetCursorPos((GLFWwindow *)m_WindowEventHandle, &x, &y);
         return std::make_pair(x, y);
     }
 }

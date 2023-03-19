@@ -16,48 +16,48 @@ namespace Magma
     {
     public:
         WindowsWindow(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height)
-            : mTitle(title), mWidth(width), mHeight(height)
+            : m_Title(title), m_Width(width), m_Height(height)
         {
             glfwInit();
 #ifndef MG_OPENGL
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
-            mWindow = glfwCreateWindow(mWidth, mHeight, title, nullptr, nullptr);
+            m_Window = glfwCreateWindow(m_Width, m_Height, title, nullptr, nullptr);
 
-            glfwSetKeyCallback(mWindow, KeyCallback);
-            glfwSetMouseButtonCallback(mWindow, ButtonCallback);
-            glfwSetCursorPosCallback(mWindow, MotionCallback);
-            glfwSetFramebufferSizeCallback(mWindow, ResizeCallback);
-            glfwSetWindowCloseCallback(mWindow, CloseCallback);
-            glfwSetScrollCallback(mWindow, ScrollCallback);
+            glfwSetKeyCallback(m_Window, KeyCallback);
+            glfwSetMouseButtonCallback(m_Window, ButtonCallback);
+            glfwSetCursorPosCallback(m_Window, MotionCallback);
+            glfwSetFramebufferSizeCallback(m_Window, ResizeCallback);
+            glfwSetWindowCloseCallback(m_Window, CloseCallback);
+            glfwSetScrollCallback(m_Window, ScrollCallback);
         }
 
         ~WindowsWindow()
         {
-            glfwDestroyWindow(mWindow);
+            glfwDestroyWindow(m_Window);
             glfwTerminate();
         }
 
         const int &GetWidth() override
         {
-            glfwGetFramebufferSize(mWindow, &mWidth, &mHeight);
-            return mWidth;
+            glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
+            return m_Width;
         }
 
         const int &GetHeight() override
         {
-            glfwGetFramebufferSize(mWindow, &mWidth, &mHeight);
-            return mHeight;
+            glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
+            return m_Height;
         }
 
         const std::string &GetTitle() const override
         {
-            return mTitle;
+            return m_Title;
         }
 
         void *GetWindowEventHandle() const override
         {
-            return mWindow;
+            return m_Window;
         }
 
         std::vector<const char *> GetVulkanExtensions() const override
@@ -88,7 +88,7 @@ namespace Magma
 
         void Draw() override
         {
-            glfwSwapBuffers(mWindow);
+            glfwSwapBuffers(m_Window);
         }
 
     protected:
@@ -148,10 +148,10 @@ namespace Magma
             EventDispatcher::Post(event);
         }
 
-        int mWidth;
-        int mHeight;
-        std::string mTitle;
-        GLFWwindow *mWindow;
+        int m_Width;
+        int m_Height;
+        std::string m_Title;
+        GLFWwindow *m_Window;
     };
 
     std::shared_ptr<Window> WindowCreate(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height)
