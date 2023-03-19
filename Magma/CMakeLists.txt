@@ -3,6 +3,8 @@ add_subdirectory(vendor/googletest)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/glfw)
 
+find_package(Vulkan REQUIRED)
+
 project(Magma VERSION 0.0.1 DESCRIPTION "The Magma Game Engine Library")
 
 add_library(${PROJECT_NAME} STATIC
@@ -37,7 +39,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} easy_profiler spdlog glfw ImGui)
+target_link_libraries(${PROJECT_NAME} easy_profiler spdlog glfw ImGui Vulkan::Vulkan)
 
 project(MagmaTest VERSION 0.0.1 DESCRIPTION "Tests for the Magma Game Engine Library")
 
@@ -76,7 +78,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} easy_profiler gtest spdlog glfw ImGui)
+target_link_libraries(${PROJECT_NAME} easy_profiler gtest spdlog glfw ImGui Vulkan::Vulkan)
 
 project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
 

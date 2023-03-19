@@ -39,4 +39,4 @@
 #endif
 
 // Hardcode RenderingAPI for now
-#define MG_OPENGL 1
+#define MG_VULKAN 1
