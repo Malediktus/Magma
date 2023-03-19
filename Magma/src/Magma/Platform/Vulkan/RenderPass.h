@@ -59,6 +59,27 @@ namespace Magma
         {
             vkDestroyRenderPass(m_Device, m_RenderPass, nullptr);
         }
+        
+        void Begin(const VkCommandBuffer &commandBuffer, const VkFramebuffer &framebuffer, const VkExtent2D &swapChainExtend)
+        {
+            VkRenderPassBeginInfo renderPassInfo{};
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = m_RenderPass;
+            renderPassInfo.framebuffer = framebuffer;
+            renderPassInfo.renderArea.offset = {0, 0};
+            renderPassInfo.renderArea.extent = swapChainExtend;
+
+            VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+            renderPassInfo.clearValueCount = 1;
+            renderPassInfo.pClearValues = &clearColor;
+            
+            vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+        }
+        
+        void End(const VkCommandBuffer &commandBuffer)
+        {
+            vkCmdEndRenderPass(commandBuffer);
+        }
 
         const VkRenderPass &GetRenderPass() { return m_RenderPass; }
 

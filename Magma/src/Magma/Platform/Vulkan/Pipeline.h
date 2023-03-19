@@ -133,7 +133,12 @@ namespace Magma
         {
             vkDestroyPipelineLayout(m_Device, m_PipelineLayout, nullptr);
         }
-
+        
+        void Bind(const VkCommandBuffer &commandBuffer)
+        {
+            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
+        }
+        
         const VkPipeline &GetPipeline() { return m_GraphicsPipeline; }
 
     private:

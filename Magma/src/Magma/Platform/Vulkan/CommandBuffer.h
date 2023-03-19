@@ -28,6 +28,26 @@ namespace Magma
         {
             vkResetCommandBuffer(m_CommandBuffer, 0);
         }
+        
+        void Begin()
+        {
+            VkCommandBufferBeginInfo beginInfo{};
+            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            beginInfo.flags = 0;                  // Optional
+            beginInfo.pInheritanceInfo = nullptr; // Optional
+
+            MG_ASSERT_MSG(vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
+        }
+        
+        void End()
+        {
+            MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffer) == VK_SUCCESS, "Failed to end recording command buffer!");
+        }
+        
+        void Draw(const int &numVertices)
+        {
+            vkCmdDraw(m_CommandBuffer, numVertices, 1, 0, 0);
+        }
 
         const VkCommandBuffer &GetCommandBuffer() { return m_CommandBuffer; }
 
@@ -54,6 +74,26 @@ namespace Magma
         void Reset(const int &index)
         {
             vkResetCommandBuffer(m_CommandBuffers[index], 0);
+        }
+        
+        void Begin(const int &index)
+        {
+            VkCommandBufferBeginInfo beginInfo{};
+            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            beginInfo.flags = 0;                  // Optional
+            beginInfo.pInheritanceInfo = nullptr; // Optional
+
+            MG_ASSERT_MSG(vkBeginCommandBuffer(m_CommandBuffers[index], &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
+        }
+        
+        void End(const int &index)
+        {
+            MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffers[index]) == VK_SUCCESS, "Failed to end recording command buffer!");
+        }
+        
+        void Draw(const int &index, const int &numVertices)
+        {
+            vkCmdDraw(m_CommandBuffers[index], numVertices, 1, 0, 0);
         }
 
         const VkCommandBuffer &GetCommandBuffer(const int &index) { return m_CommandBuffers[index]; }

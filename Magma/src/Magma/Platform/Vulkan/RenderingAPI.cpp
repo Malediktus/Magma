@@ -127,47 +127,15 @@ namespace Magma
 
             m_InFlightFences[m_CurrentFrame]->Reset();
             m_CommandBuffers->Reset(m_CurrentFrame);
-            VkCommandBufferBeginInfo beginInfo{};
-            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-            beginInfo.flags = 0;                  // Optional
-            beginInfo.pInheritanceInfo = nullptr; // Optional
-
-            MG_ASSERT_MSG(vkBeginCommandBuffer(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
-
-            VkRenderPassBeginInfo renderPassInfo{};
-            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            renderPassInfo.renderPass = m_RenderPass->GetRenderPass();
-            renderPassInfo.framebuffer = m_Framebuffers[imageIndex]->GetFramebuffer();
-            renderPassInfo.renderArea.offset = {0, 0};
-            renderPassInfo.renderArea.extent = m_SwapChain->GetSwapChainExtend();
-
-            VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-            renderPassInfo.clearValueCount = 1;
-            renderPassInfo.pClearValues = &clearColor;
-
-            vkCmdBeginRenderPass(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipeline());
-
-            VkViewport viewport{};
-            viewport.x = 0.0f;
-            viewport.y = 0.0f;
-            viewport.width = (float)m_SwapChain->GetSwapChainExtend().width;
-            viewport.height = (float)m_SwapChain->GetSwapChainExtend().height;
-            viewport.minDepth = 0.0f;
-            viewport.maxDepth = 1.0f;
-            vkCmdSetViewport(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 0, 1, &viewport);
-
-            VkRect2D scissor{};
-            scissor.offset = {0, 0};
-            scissor.extent = m_SwapChain->GetSwapChainExtend();
-            vkCmdSetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 0, 1, &scissor);
-            
+            m_CommandBuffers->Begin(m_CurrentFrame);
+            m_RenderPass->Begin(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), m_Framebuffers[imageIndex]->GetFramebuffer(), m_SwapChain->GetSwapChainExtend());
+            m_Pipeline->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            m_SwapChain->SetViewport(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            m_SwapChain->SetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
-
-            vkCmdDraw(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 3, 1, 0, 0);
-            vkCmdEndRenderPass(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
-
-            MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame)) == VK_SUCCESS, "Failed to record command buffer!");
+            m_CommandBuffers->Draw(m_CurrentFrame, 3);
+            m_RenderPass->End(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            m_CommandBuffers->End(m_CurrentFrame);
 
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

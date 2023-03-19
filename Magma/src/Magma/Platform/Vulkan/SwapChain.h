@@ -104,6 +104,26 @@ namespace Magma
             for (auto imageView : m_SwapChainImageViews)
                 vkDestroyImageView(m_Device, imageView, nullptr);
         }
+        
+        void SetViewport(const VkCommandBuffer &commandBuffer)
+        {
+            VkViewport viewport{};
+            viewport.x = 0.0f;
+            viewport.y = 0.0f;
+            viewport.width = (float)m_SwapChainExtent.width;
+            viewport.height = (float)m_SwapChainExtent.height;
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+            vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+        }
+        
+        void SetScissor(const VkCommandBuffer &commandBuffer)
+        {
+            VkRect2D scissor{};
+            scissor.offset = {0, 0};
+            scissor.extent = m_SwapChainExtent;
+            vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+        }
 
     private:
         VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
