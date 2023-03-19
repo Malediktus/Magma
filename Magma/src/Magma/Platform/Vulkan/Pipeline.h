@@ -7,6 +7,7 @@
 
 #include <Magma/Core/Logger.h>
 #include <Magma/Platform/Vulkan/Device.h>
+#include <Magma/Platform/Vulkan/Vertex.h>
 
 namespace Magma
 {
@@ -35,11 +36,16 @@ namespace Magma
             fragShaderStageInfo.pName = "main";
 
             VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+            
+            auto bindingDescription = Vertex::GetBindingDescription();
+            auto attributeDescriptions = Vertex::GetAttributeDescriptions();
 
             VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
             vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-            vertexInputInfo.vertexBindingDescriptionCount = 0;
-            vertexInputInfo.vertexAttributeDescriptionCount = 0;
+            vertexInputInfo.vertexBindingDescriptionCount = 1;
+            vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+            vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+            vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
             VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
             inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

@@ -18,25 +18,12 @@
 #include <Magma/Platform/Vulkan/CommandBuffer.h>
 #include <Magma/Platform/Vulkan/Semaphore.h>
 #include <Magma/Platform/Vulkan/Fence.h>
+#include <Magma/Platform/Vulkan/VertexBuffer.h>
 
 namespace Magma
 {
-    struct Vertex {
-        glm::vec2 pos;
-        glm::vec3 color;
-        
-        static VkVertexInputBindingDescription GetBindingDescription() {
-            VkVertexInputBindingDescription bindingDescription{};
-            bindingDescription.binding = 0;
-            bindingDescription.stride = sizeof(Vertex);
-            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-            return bindingDescription;
-        }
-    };
-
     const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
     };
@@ -72,6 +59,7 @@ namespace Magma
                 m_Framebuffers[i] = std::unique_ptr<VulkanFramebuffer>(new VulkanFramebuffer(m_Device->GetDevice(), m_RenderPass->GetRenderPass(), m_SwapChain->GetSwapChainExtend(), m_SwapChain->GetSwapChainImageViews()[i]));
 
             m_CommandPool = std::unique_ptr<VulkanCommandPool>(new VulkanCommandPool(m_Device->GetDevice(), m_Device->GetQueueFamilyIndices()));
+            m_VertexBuffer = std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), vertices));
             m_CommandBuffers = std::unique_ptr<VulkanCommandBufferArray>(new VulkanCommandBufferArray(MAX_FRAMES_IN_FLIGHT, m_Device->GetDevice(), m_CommandPool->GetCommandPool()));
 
             m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -109,6 +97,10 @@ namespace Magma
 
             m_SwapChain->DestroySwapChainImageViews();
             m_SwapChain->DestroySwapChain();
+            
+            m_VertexBuffer->DestroyVertexBuffer();
+            m_VertexBuffer->DestroyVertexBufferMemory();
+            
             m_Device->DestroyDevice();
             m_Instance->DestroyDebugMessenger();
 
@@ -118,10 +110,10 @@ namespace Magma
 
         void BeginFrame() override
         {
-            m_InFlightFences[mCurrentFrame]->WaitForSignal();
+            m_InFlightFences[m_CurrentFrame]->WaitForSignal();
 
             uint32_t imageIndex;
-            VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[mCurrentFrame]->GetSemaphore(), VK_NULL_HANDLE, &imageIndex);
+            VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame]->GetSemaphore(), VK_NULL_HANDLE, &imageIndex);
 
             if (result == VK_ERROR_OUT_OF_DATE_KHR)
             {
@@ -133,14 +125,14 @@ namespace Magma
                 MG_ASSERT_MSG(false, "Failed to acquire swap chain image!");
             }
 
-            m_InFlightFences[mCurrentFrame]->Reset();
-            m_CommandBuffers->Reset(mCurrentFrame);
+            m_InFlightFences[m_CurrentFrame]->Reset();
+            m_CommandBuffers->Reset(m_CurrentFrame);
             VkCommandBufferBeginInfo beginInfo{};
             beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
             beginInfo.flags = 0;                  // Optional
             beginInfo.pInheritanceInfo = nullptr; // Optional
 
-            MG_ASSERT_MSG(vkBeginCommandBuffer(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
+            MG_ASSERT_MSG(vkBeginCommandBuffer(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
 
             VkRenderPassBeginInfo renderPassInfo{};
             renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -153,8 +145,8 @@ namespace Magma
             renderPassInfo.clearValueCount = 1;
             renderPassInfo.pClearValues = &clearColor;
 
-            vkCmdBeginRenderPass(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipeline());
+            vkCmdBeginRenderPass(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipeline());
 
             VkViewport viewport{};
             viewport.x = 0.0f;
@@ -163,34 +155,36 @@ namespace Magma
             viewport.height = (float)m_SwapChain->GetSwapChainExtend().height;
             viewport.minDepth = 0.0f;
             viewport.maxDepth = 1.0f;
-            vkCmdSetViewport(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), 0, 1, &viewport);
+            vkCmdSetViewport(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 0, 1, &viewport);
 
             VkRect2D scissor{};
             scissor.offset = {0, 0};
             scissor.extent = m_SwapChain->GetSwapChainExtend();
-            vkCmdSetScissor(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), 0, 1, &scissor);
+            vkCmdSetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 0, 1, &scissor);
+            
+            m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
 
-            vkCmdDraw(m_CommandBuffers->GetCommandBuffer(mCurrentFrame), 3, 1, 0, 0);
-            vkCmdEndRenderPass(m_CommandBuffers->GetCommandBuffer(mCurrentFrame));
+            vkCmdDraw(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), 3, 1, 0, 0);
+            vkCmdEndRenderPass(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
 
-            MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffers->GetCommandBuffer(mCurrentFrame)) == VK_SUCCESS, "Failed to record command buffer!");
+            MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame)) == VK_SUCCESS, "Failed to record command buffer!");
 
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-            VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[mCurrentFrame]->GetSemaphore()};
+            VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]->GetSemaphore()};
             VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
             submitInfo.waitSemaphoreCount = 1;
             submitInfo.pWaitSemaphores = waitSemaphores;
             submitInfo.pWaitDstStageMask = waitStages;
             submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &m_CommandBuffers->GetCommandBuffer(mCurrentFrame);
+            submitInfo.pCommandBuffers = &m_CommandBuffers->GetCommandBuffer(m_CurrentFrame);
 
-            VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphores[mCurrentFrame]->GetSemaphore()};
+            VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphores[m_CurrentFrame]->GetSemaphore()};
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores = signalSemaphores;
 
-            MG_ASSERT_MSG(vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_InFlightFences[mCurrentFrame]->GetFence()) == VK_SUCCESS, "Failed to submit draw command buffer!");
+            MG_ASSERT_MSG(vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame]->GetFence()) == VK_SUCCESS, "Failed to submit draw command buffer!");
 
             VkPresentInfoKHR presentInfo{};
             presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -205,9 +199,9 @@ namespace Magma
             presentInfo.pResults = nullptr; // Optional
 
             result = vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo);
-            if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || mFramebufferResized)
+            if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_FramebufferResized)
             {
-                mFramebufferResized = false;
+                m_FramebufferResized = false;
                 RecreateSwapChain();
             }
             else if (result != VK_SUCCESS)
@@ -215,7 +209,7 @@ namespace Magma
                 MG_ASSERT_MSG(false, "Failed to present swap chain image!");
             }
 
-            mCurrentFrame = (mCurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+            m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         }
 
         void EndFrame() override
@@ -242,7 +236,7 @@ namespace Magma
 
         void WindowResizeCallback(const Event &e)
         {
-            mFramebufferResized = true;
+            m_FramebufferResized = true;
         }
 
         Window *m_Window;
@@ -255,14 +249,15 @@ namespace Magma
         std::unique_ptr<VulkanPipeline> m_Pipeline;
         std::vector<std::unique_ptr<VulkanFramebuffer>> m_Framebuffers;
         std::unique_ptr<VulkanCommandPool> m_CommandPool;
+        std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
 
         std::unique_ptr<VulkanCommandBufferArray> m_CommandBuffers;
         std::vector<std::unique_ptr<VulkanSemaphore>> m_ImageAvailableSemaphores;
         std::vector<std::unique_ptr<VulkanSemaphore>> m_RenderFinishedSemaphores;
         std::vector<std::unique_ptr<VulkanFence>> m_InFlightFences;
 
-        uint32_t mCurrentFrame = 0;
-        bool mFramebufferResized = false;
+        uint32_t m_CurrentFrame = 0;
+        bool m_FramebufferResized = false;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window)
