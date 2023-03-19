@@ -18,6 +18,8 @@ namespace Magma
         while (m_Running)
         {
             m_Window->Update();
+
+            m_Window->Draw();
         }
 
         OnShutdown();

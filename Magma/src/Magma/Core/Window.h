@@ -17,6 +17,7 @@ namespace Magma
         virtual std::vector<const char *> GetVulkanExtensions() const = 0;
 
         virtual void Update() = 0;
+        virtual void Draw() = 0;
     };
 
     std::shared_ptr<Window> WindowCreate(const char *title, unsigned int x, unsigned int y, unsigned int width, unsigned int height);

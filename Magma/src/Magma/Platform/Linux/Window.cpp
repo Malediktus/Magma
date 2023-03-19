@@ -86,6 +86,11 @@ namespace Magma
             glfwPollEvents();
         }
 
+        void Draw() override
+        {
+            glfwSwapBuffers(mWindow);
+        }
+
     protected:
         static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
         {
