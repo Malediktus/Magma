@@ -2,6 +2,7 @@
 #ifdef MG_VULKAN
 
 #include <vulkan/vulkan.h>
+#include <glm/glm.hpp>
 
 #include <Magma/Event/Event.h>
 #include <Magma/Renderer/RenderingAPI.h>
@@ -20,6 +21,26 @@
 
 namespace Magma
 {
+    struct Vertex {
+        glm::vec2 pos;
+        glm::vec3 color;
+        
+        static VkVertexInputBindingDescription GetBindingDescription() {
+            VkVertexInputBindingDescription bindingDescription{};
+            bindingDescription.binding = 0;
+            bindingDescription.stride = sizeof(Vertex);
+            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+            return bindingDescription;
+        }
+    };
+
+    const std::vector<Vertex> vertices = {
+        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    };
+
 #ifdef _DEBUG
     const bool enableValidationLayers = true;
 #else

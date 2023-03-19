@@ -8,45 +8,13 @@ find_package(Vulkan REQUIRED)
 
 project(Magma VERSION 0.0.1 DESCRIPTION "The Magma Game Engine Library")
 
+file (GLOB_RECURSE CPP_SOURCE_FILES
+    "src/Magma/*.cpp"
+    "src/Magma/*.h"
+)
+
 add_library(${PROJECT_NAME} STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h
-    
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Application.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Application.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Window.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Device.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Instance.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Surface.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/SwapChain.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderPass.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Pipeline.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Framebuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandPool.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandBuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Semaphore.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Fence.h
+    ${CPP_SOURCE_FILES}
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -64,47 +32,7 @@ project(MagmaTest VERSION 0.0.1 DESCRIPTION "Tests for the Magma Game Engine Lib
 
 add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/test/TestMain.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h
-    
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Application.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Application.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Asserts.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Window.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Input.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/Event.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Event/KeyCode.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Windows/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/MacOS/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Linux/Input.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/Renderer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Device.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Instance.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Surface.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/SwapChain.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderPass.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Pipeline.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Framebuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandPool.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandBuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Semaphore.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Fence.h
+    ${CPP_SOURCE_FILES}
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
