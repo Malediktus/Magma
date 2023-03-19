@@ -81,6 +81,13 @@ namespace Magma
 #endif
         }
 
+#ifdef MG_VULKAN
+        VkResult CreateVulkanWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const override
+        {
+            return glfwCreateWindowSurface(instance, m_Window, nullptr, surface);
+        }
+#endif
+
         void Update() override
         {
             glfwPollEvents();

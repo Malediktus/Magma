@@ -36,6 +36,17 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Device.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Instance.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Surface.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/SwapChain.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderPass.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Pipeline.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Framebuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandPool.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Semaphore.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Fence.h
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -44,6 +55,7 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
+target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERTIONS_ENABLED)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} easy_profiler spdlog glfw ImGui Vulkan::Vulkan glm_shared)
@@ -60,6 +72,7 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Logger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Asserts.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Entry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Platform.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Core/Window.h
@@ -81,6 +94,17 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Renderer/RenderingAPI.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderingAPI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Device.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Instance.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Surface.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/SwapChain.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/RenderPass.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Pipeline.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Framebuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandPool.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/CommandBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Semaphore.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Platform/Vulkan/Fence.h
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -89,6 +113,7 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
+target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERTIONS_ENABLED)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} easy_profiler gtest spdlog glfw ImGui Vulkan::Vulkan glm_shared)

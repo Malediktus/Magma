@@ -18,3 +18,8 @@ namespace Magma
         m_ClientLogger->set_level(spdlog::level::trace);
     }
 }
+
+void report_assertion_failure(const char *expression, const char *message, const char *file, int line)
+{
+    LOG_CORE_FATAL("Assertion failure: {}, '{}', in File {}, Line {}", expression, message, file, line);
+}

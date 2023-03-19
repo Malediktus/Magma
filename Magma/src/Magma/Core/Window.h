@@ -2,6 +2,10 @@
 
 #include <Magma/pch.h>
 
+#ifdef MG_VULKAN
+#include <vulkan/vulkan.h>
+#endif
+
 namespace Magma
 {
     class Window
@@ -15,6 +19,9 @@ namespace Magma
 
         virtual void *GetWindowEventHandle() const = 0;
         virtual std::vector<const char *> GetVulkanExtensions() const = 0;
+#ifdef MG_VULKAN
+        virtual VkResult CreateVulkanWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const = 0;
+#endif
 
         virtual void Update() = 0;
         virtual void Draw() = 0;
