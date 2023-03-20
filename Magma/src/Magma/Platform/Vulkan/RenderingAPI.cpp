@@ -142,7 +142,7 @@ namespace Magma
             m_SwapChain->SetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_IndexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
-            m_CommandBuffers->Draw(m_CurrentFrame, static_cast<uint32_t>(indices.size()));
+            m_CommandBuffers->DrawIndexed(m_CurrentFrame, static_cast<uint32_t>(indices.size()));
             m_RenderPass->End(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->End(m_CurrentFrame);
 

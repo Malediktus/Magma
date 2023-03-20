@@ -91,7 +91,12 @@ namespace Magma
             MG_ASSERT_MSG(vkEndCommandBuffer(m_CommandBuffers[index]) == VK_SUCCESS, "Failed to end recording command buffer!");
         }
         
-        void Draw(const int &index, const int &numIndices)
+        void Draw(const int &index, const int &numVertices)
+        {
+            vkCmdDraw(m_CommandBuffers[index], numVertices, 1, 0, 0);
+        }
+        
+        void DrawIndexed(const int &index, const int &numIndices)
         {
             vkCmdDrawIndexed(m_CommandBuffers[index], numIndices, 1, 0, 0, 0);
         }
