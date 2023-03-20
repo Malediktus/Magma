@@ -18,12 +18,12 @@
 #include <Magma/Platform/Vulkan/CommandBuffer.h>
 #include <Magma/Platform/Vulkan/Semaphore.h>
 #include <Magma/Platform/Vulkan/Fence.h>
-#include <Magma/Platform/Vulkan/VertexBuffer.h>
+#include <Magma/Platform/Vulkan/Buffer.h>
 
 namespace Magma
 {
     const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
     };
@@ -59,7 +59,13 @@ namespace Magma
                 m_Framebuffers[i] = std::unique_ptr<VulkanFramebuffer>(new VulkanFramebuffer(m_Device->GetDevice(), m_RenderPass->GetRenderPass(), m_SwapChain->GetSwapChainExtend(), m_SwapChain->GetSwapChainImageViews()[i]));
 
             m_CommandPool = std::unique_ptr<VulkanCommandPool>(new VulkanCommandPool(m_Device->GetDevice(), m_Device->GetQueueFamilyIndices()));
-            m_VertexBuffer = std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), vertices));
+            
+            m_VertexBuffer = std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size()));
+            m_StagingBuffer = std::unique_ptr<VulkanStagingBuffer>(new VulkanStagingBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), vertices));
+            m_VertexBuffer->CopyFromStagingBuffer(m_StagingBuffer->GetBuffer(), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size(), m_CommandPool->GetCommandPool(), m_Device->GetGraphicsQueue());
+            m_StagingBuffer->DestroyBuffer();
+            m_StagingBuffer->DestroyBufferMemory();
+            
             m_CommandBuffers = std::unique_ptr<VulkanCommandBufferArray>(new VulkanCommandBufferArray(MAX_FRAMES_IN_FLIGHT, m_Device->GetDevice(), m_CommandPool->GetCommandPool()));
 
             m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -98,8 +104,8 @@ namespace Magma
             m_SwapChain->DestroySwapChainImageViews();
             m_SwapChain->DestroySwapChain();
             
-            m_VertexBuffer->DestroyVertexBuffer();
-            m_VertexBuffer->DestroyVertexBufferMemory();
+            m_VertexBuffer->DestroyBuffer();
+            m_VertexBuffer->DestroyBufferMemory();
             
             m_Device->DestroyDevice();
             m_Instance->DestroyDebugMessenger();
@@ -217,6 +223,7 @@ namespace Magma
         std::unique_ptr<VulkanPipeline> m_Pipeline;
         std::vector<std::unique_ptr<VulkanFramebuffer>> m_Framebuffers;
         std::unique_ptr<VulkanCommandPool> m_CommandPool;
+        std::unique_ptr<VulkanStagingBuffer> m_StagingBuffer;
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
 
         std::unique_ptr<VulkanCommandBufferArray> m_CommandBuffers;
