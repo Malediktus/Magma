@@ -23,9 +23,14 @@
 namespace Magma
 {
     const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+    };
+
+    const std::vector<uint16_t> indices = {
+        0, 1, 2, 2, 3, 0
     };
 
 #ifdef _DEBUG
@@ -59,13 +64,8 @@ namespace Magma
                 m_Framebuffers[i] = std::unique_ptr<VulkanFramebuffer>(new VulkanFramebuffer(m_Device->GetDevice(), m_RenderPass->GetRenderPass(), m_SwapChain->GetSwapChainExtend(), m_SwapChain->GetSwapChainImageViews()[i]));
 
             m_CommandPool = std::unique_ptr<VulkanCommandPool>(new VulkanCommandPool(m_Device->GetDevice(), m_Device->GetQueueFamilyIndices()));
-            
-            m_VertexBuffer = std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size()));
-            m_StagingBuffer = std::unique_ptr<VulkanStagingBuffer>(new VulkanStagingBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), vertices));
-            m_VertexBuffer->CopyFromStagingBuffer(m_StagingBuffer->GetBuffer(), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size(), m_CommandPool->GetCommandPool(), m_Device->GetGraphicsQueue());
-            m_StagingBuffer->DestroyBuffer();
-            m_StagingBuffer->DestroyBufferMemory();
-            
+            m_IndexBuffer = std::unique_ptr<VulkanIndexBuffer>(new VulkanIndexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), m_CommandPool->GetCommandPool(), m_Device->GetGraphicsQueue(), indices));
+            m_VertexBuffer = std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(m_Device->GetDevice(), m_Device->GetPhysicalDevice(), m_CommandPool->GetCommandPool(), m_Device->GetGraphicsQueue(), vertices));
             m_CommandBuffers = std::unique_ptr<VulkanCommandBufferArray>(new VulkanCommandBufferArray(MAX_FRAMES_IN_FLIGHT, m_Device->GetDevice(), m_CommandPool->GetCommandPool()));
 
             m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -104,6 +104,8 @@ namespace Magma
             m_SwapChain->DestroySwapChainImageViews();
             m_SwapChain->DestroySwapChain();
             
+            m_IndexBuffer->DestroyBuffer();
+            m_IndexBuffer->DestroyBufferMemory();
             m_VertexBuffer->DestroyBuffer();
             m_VertexBuffer->DestroyBufferMemory();
             
@@ -139,7 +141,8 @@ namespace Magma
             m_SwapChain->SetViewport(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_SwapChain->SetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
-            m_CommandBuffers->Draw(m_CurrentFrame, 3);
+            m_IndexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            m_CommandBuffers->Draw(m_CurrentFrame, static_cast<uint32_t>(indices.size()));
             m_RenderPass->End(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->End(m_CurrentFrame);
 
@@ -225,6 +228,7 @@ namespace Magma
         std::unique_ptr<VulkanCommandPool> m_CommandPool;
         std::unique_ptr<VulkanStagingBuffer> m_StagingBuffer;
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
+        std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
 
         std::unique_ptr<VulkanCommandBufferArray> m_CommandBuffers;
         std::vector<std::unique_ptr<VulkanSemaphore>> m_ImageAvailableSemaphores;

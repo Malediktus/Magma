@@ -66,6 +66,7 @@ namespace Magma
         
         friend class VulkanVertexBuffer;
         friend class VulkanStagingBuffer;
+        friend class VulkanIndexBuffer;
         
         const VkDevice &m_Device;
         const VkPhysicalDevice &m_PhysicalDevice;
@@ -73,12 +74,34 @@ namespace Magma
         VkDeviceMemory m_BufferMemory;
     };
 
+    class VulkanStagingBuffer : public VulkanBuffer
+    {
+    public:
+        VulkanStagingBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkDeviceSize dataSize, const void* stagingData)
+            : VulkanBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, (const VkMemoryPropertyFlags) (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), dataSize, device, physicalDevice)
+        {
+            void* data;
+            vkMapMemory(m_Device, m_BufferMemory, 0, dataSize, 0, &data);
+            memcpy(data, stagingData, (size_t) dataSize);
+            vkUnmapMemory(m_Device, m_BufferMemory);
+        }
+        
+        void Bind(const VkCommandBuffer &commandBuffer) override
+        {
+            MG_ASSERT_MSG(false, "Binding staging buffers is not allowed!");
+        }
+    };
+
     class VulkanVertexBuffer : public VulkanBuffer
     {
     public:
-        VulkanVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkDeviceSize &size)
-            : VulkanBuffer((const VkBufferUsageFlags) VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, device, physicalDevice)
+        VulkanVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const std::vector<Vertex> vertices)
+            : VulkanBuffer((const VkBufferUsageFlags) VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, sizeof(vertices[0]) * vertices.size(), device, physicalDevice)
         {
+            auto stagingBuffer = std::unique_ptr<VulkanStagingBuffer>(new VulkanStagingBuffer(m_Device, m_PhysicalDevice, sizeof(vertices[0]) * vertices.size(), vertices.data()));
+            CopyFromStagingBuffer(stagingBuffer->GetBuffer(), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size(), commandPool, graphicsQueue);
+            stagingBuffer->DestroyBuffer();
+            stagingBuffer->DestroyBufferMemory();
         }
         
         void CopyFromStagingBuffer(const VkBuffer &stagingBuffer, const VkDeviceSize &size, const VkCommandPool &commandPool, const VkQueue &graphicsQueue)
@@ -124,22 +147,56 @@ namespace Magma
         }
     };
 
-    class VulkanStagingBuffer : public VulkanBuffer
+    class VulkanIndexBuffer : public VulkanBuffer
     {
     public:
-        VulkanStagingBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const std::vector<Vertex> vertices)
-            : VulkanBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, (const VkMemoryPropertyFlags) (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), (const VkDeviceSize) sizeof(vertices[0]) * vertices.size(), device, physicalDevice)
+        VulkanIndexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const std::vector<uint16_t> indices)
+            : VulkanBuffer((const VkBufferUsageFlags) (VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, sizeof(indices[0]) * indices.size(), device, physicalDevice)
         {
-            const VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-            void* data;
-            vkMapMemory(m_Device, m_BufferMemory, 0, bufferSize, 0, &data);
-            memcpy(data, vertices.data(), (size_t) bufferSize);
-            vkUnmapMemory(m_Device, m_BufferMemory);
+            auto stagingBuffer = std::unique_ptr<VulkanStagingBuffer>(new VulkanStagingBuffer(m_Device, m_PhysicalDevice, sizeof(indices[0]) * indices.size(), indices.data()));
+            CopyFromStagingBuffer(stagingBuffer->GetBuffer(), (const VkDeviceSize) sizeof(indices[0]) * indices.size(), commandPool, graphicsQueue);
+            stagingBuffer->DestroyBuffer();
+            stagingBuffer->DestroyBufferMemory();
+        }
+        
+        void CopyFromStagingBuffer(const VkBuffer &stagingBuffer, const VkDeviceSize &size, const VkCommandPool &commandPool, const VkQueue &graphicsQueue)
+        {
+            VkCommandBufferAllocateInfo allocInfo{};
+            allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+            allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+            allocInfo.commandPool = commandPool;
+            allocInfo.commandBufferCount = 1;
+
+            VkCommandBuffer commandBuffer;
+            vkAllocateCommandBuffers(m_Device, &allocInfo, &commandBuffer);
+            
+            VkCommandBufferBeginInfo beginInfo{};
+            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+            vkBeginCommandBuffer(commandBuffer, &beginInfo);
+            
+            VkBufferCopy copyRegion{};
+            copyRegion.srcOffset = 0; // Optional
+            copyRegion.dstOffset = 0; // Optional
+            copyRegion.size = size;
+            vkCmdCopyBuffer(commandBuffer, stagingBuffer, m_Buffer, 1, &copyRegion);
+            
+            vkEndCommandBuffer(commandBuffer);
+            VkSubmitInfo submitInfo{};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &commandBuffer;
+
+            vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+            vkQueueWaitIdle(graphicsQueue);
+            
+            vkFreeCommandBuffers(m_Device, commandPool, 1, &commandBuffer);
         }
         
         void Bind(const VkCommandBuffer &commandBuffer) override
         {
-            MG_ASSERT_MSG(false, "Binding staging buffers is not allowed!");
+            vkCmdBindIndexBuffer(commandBuffer, m_Buffer, 0, VK_INDEX_TYPE_UINT16);
         }
     };
 }
