@@ -12,7 +12,7 @@
 
 void report_assertion_failure(const char *expression, const char *message, const char *file, int line);
 
-#define MG_ASSERT(expr)                                              \
+#define MG_ASSERT_NO_MSG(expr)                                       \
     {                                                                \
         if (expr)                                                    \
         {                                                            \
