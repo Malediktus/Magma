@@ -37,8 +37,8 @@ namespace Magma
 
             VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
             
-            auto bindingDescription = Vertex::GetBindingDescription();
-            auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+            auto bindingDescription = VulkanVertex::GetBindingDescription();
+            auto attributeDescriptions = VulkanVertex::GetAttributeDescriptions();
 
             VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
             vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

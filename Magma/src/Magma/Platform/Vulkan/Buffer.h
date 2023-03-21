@@ -95,7 +95,7 @@ namespace Magma
     class VulkanVertexBuffer : public VulkanBuffer
     {
     public:
-        VulkanVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const std::vector<Vertex> vertices)
+        VulkanVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const std::vector<VulkanVertex> vertices)
             : VulkanBuffer((const VkBufferUsageFlags) VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, sizeof(vertices[0]) * vertices.size(), device, physicalDevice)
         {
             auto stagingBuffer = std::unique_ptr<VulkanStagingBuffer>(new VulkanStagingBuffer(m_Device, m_PhysicalDevice, sizeof(vertices[0]) * vertices.size(), vertices.data()));

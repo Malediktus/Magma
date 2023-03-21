@@ -13,10 +13,16 @@ namespace Magma
         glm::vec4 Color;
     };
 
+    struct Vertex
+    {
+        glm::vec3 Position;
+        glm::vec4 Color;
+    };
+
     struct Mesh
     {
-        unsigned int *Vertices;
-        unsigned int *Indicies;
+        std::vector<Vertex> Vertices;
+        std::vector<uint32_t> Indicies;
     };
 
     class Renderer
