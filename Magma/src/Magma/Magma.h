@@ -4,3 +4,4 @@
 
 #include <Magma/Core/Entry.h>
 #include <Magma/Core/Logger.h>
+#include <imgui.h>

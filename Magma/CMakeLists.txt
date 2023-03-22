@@ -51,6 +51,7 @@ project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
 add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_draw.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_demo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_tables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_widgets.cpp

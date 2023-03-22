@@ -21,6 +21,8 @@ namespace Magma
         {
             m_Window->Update();
             Renderer::BeginFrame();
+            OnImGuiRender();
+            OnUpdate();
             Renderer::EndFrame();
             m_Window->Draw();
         }

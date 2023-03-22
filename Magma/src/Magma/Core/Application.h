@@ -18,6 +18,7 @@ namespace Magma
 		virtual void OnInit() = 0;
 		virtual void OnShutdown() = 0;
 		virtual void OnUpdate() = 0;
+        virtual void OnImGuiRender() = 0;
 
 	private:
 		std::shared_ptr<Window> m_Window;

@@ -53,10 +53,10 @@ namespace Magma
 
             MG_ASSERT_MSG(m_PhysicalDevice != VK_NULL_HANDLE, "Failed to find a suitable GPU!");
 
-            QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
+            m_QueueFamiliyIndices = FindQueueFamilies(m_PhysicalDevice);
 
             std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-            std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+            std::set<uint32_t> uniqueQueueFamilies = {m_QueueFamiliyIndices.graphicsFamily.value(), m_QueueFamiliyIndices.presentFamily.value()};
 
             float queuePriority = 1.0f;
             for (uint32_t queueFamily : uniqueQueueFamilies)
@@ -93,8 +93,8 @@ namespace Magma
 
             MG_ASSERT_MSG(vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, nullptr, &m_Device) == VK_SUCCESS, "failed to create logical device!");
 
-            vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &m_GraphicsQueue);
-            vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &m_PresentQueue);
+            vkGetDeviceQueue(m_Device, m_QueueFamiliyIndices.graphicsFamily.value(), 0, &m_GraphicsQueue);
+            vkGetDeviceQueue(m_Device, m_QueueFamiliyIndices.presentFamily.value(), 0, &m_PresentQueue);
         }
 
         void DestroyDevice()
@@ -107,7 +107,7 @@ namespace Magma
         const VkQueue &GetGraphicsQueue() { return m_GraphicsQueue; }
         const VkQueue &GetPresentQueue() { return m_PresentQueue; }
         const SwapChainSupportDetails QuerySwapChainSupport() const { return QuerySwapChainSupport(m_PhysicalDevice); }
-        const QueueFamilyIndices GetQueueFamilyIndices() const { return FindQueueFamilies(m_PhysicalDevice); }
+        const QueueFamilyIndices GetQueueFamilyIndices() const { return m_QueueFamiliyIndices; }
 
     private:
         const bool IsDeviceSuitable(VkPhysicalDevice device) const
@@ -215,6 +215,7 @@ namespace Magma
         VkDevice m_Device;
         VkQueue m_GraphicsQueue;
         VkQueue m_PresentQueue;
+        QueueFamilyIndices m_QueueFamiliyIndices;
     };
 }
 

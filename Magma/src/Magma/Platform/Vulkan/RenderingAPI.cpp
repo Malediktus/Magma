@@ -19,6 +19,12 @@
 #include <Magma/Platform/Vulkan/Semaphore.h>
 #include <Magma/Platform/Vulkan/Fence.h>
 #include <Magma/Platform/Vulkan/Buffer.h>
+#include <Magma/Platform/Vulkan/DescriptorPool.h>
+
+#include <imgui.h>
+// TODO: Make ImGui independent from window implementation, when using native windows
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_vulkan.h>
 
 namespace Magma
 {
@@ -31,6 +37,21 @@ namespace Magma
 
     const std::vector<uint16_t> indices = {
         0, 1, 2, 2, 3, 0
+    };
+
+    // TODO: Balance
+    const std::vector<VkDescriptorPoolSize> imGuiPoolSizes = {
+        { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
     };
 
 #ifdef _DEBUG
@@ -79,11 +100,60 @@ namespace Magma
             }
 
             EventDispatcher::Subscribe<WindowResizeEvent>(std::bind(&VulkanRenderingAPI::WindowResizeCallback, this, std::placeholders::_1));
+            
+            // ImGui init
+            m_ImGuiDescriptorPool = std::unique_ptr<VulkanDescriptorPool>(new VulkanDescriptorPool(m_Device->GetDevice(), imGuiPoolSizes));
+            ImGui::CreateContext();
+            ImGui::StyleColorsDark();
+            // TODO: Make window implementation independent
+            ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)m_Window->GetWindowEventHandle(), true);
+            ImGui_ImplVulkan_InitInfo initInfo{};
+            initInfo.Instance = m_Instance->GetInstance();
+            initInfo.PhysicalDevice = m_Device->GetPhysicalDevice();
+            initInfo.Device = m_Device->GetDevice();
+            initInfo.QueueFamily = m_Device->GetQueueFamilyIndices().graphicsFamily.value();
+            initInfo.Queue = m_Device->GetGraphicsQueue();
+            initInfo.DescriptorPool = m_ImGuiDescriptorPool->GetDescriptorPool();
+            // TODO: Balance
+            initInfo.MinImageCount = 2;
+            initInfo.ImageCount = (uint32_t) m_SwapChain->GetSwapChainImageViews().size();
+        
+            ImGui_ImplVulkan_Init(&initInfo, m_RenderPass->GetRenderPass());
+            
+            // Upload ImGui fonts
+            {
+                VkCommandPool commandPool = m_CommandPool->GetCommandPool();
+                VkCommandBuffer commandBuffer = m_CommandBuffers->GetCommandBuffer(0);
+                
+                MG_ASSERT_MSG(vkResetCommandPool(m_Device->GetDevice(), commandPool, 0) == VK_SUCCESS, "Failed reset command pool for ImGui!");
+                VkCommandBufferBeginInfo beginInfo{};
+                beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+                beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+                
+                MG_ASSERT_MSG(vkBeginCommandBuffer(commandBuffer, &beginInfo) == VK_SUCCESS, "Failed to begin command buffer for ImGui!");
+                ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+                MG_ASSERT_MSG(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS, "Failed to end command buffer for ImGui!");
+                
+                VkSubmitInfo submitInfo{};
+                submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+                submitInfo.commandBufferCount = 1;
+                submitInfo.pCommandBuffers = &commandBuffer;
+                MG_ASSERT_MSG(vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE) == VK_SUCCESS, "Failed to submit graphics queue for ImGui!");
+                
+                vkDeviceWaitIdle(m_Device->GetDevice());
+                ImGui_ImplVulkan_DestroyFontUploadObjects();
+            }
         }
 
         ~VulkanRenderingAPI()
         {
             vkDeviceWaitIdle(m_Device->GetDevice());
+            
+            // ImGui
+            ImGui_ImplVulkan_Shutdown();
+            m_ImGuiDescriptorPool->DestroyDescriptorPool();
+            ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
 
             for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
@@ -120,8 +190,7 @@ namespace Magma
         {
             m_InFlightFences[m_CurrentFrame]->WaitForSignal();
 
-            uint32_t imageIndex;
-            VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame]->GetSemaphore(), VK_NULL_HANDLE, &imageIndex);
+            VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame]->GetSemaphore(), VK_NULL_HANDLE, &m_ImageIndex);
 
             if (result == VK_ERROR_OUT_OF_DATE_KHR)
             {
@@ -136,13 +205,27 @@ namespace Magma
             m_InFlightFences[m_CurrentFrame]->Reset();
             m_CommandBuffers->Reset(m_CurrentFrame);
             m_CommandBuffers->Begin(m_CurrentFrame);
-            m_RenderPass->Begin(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), m_Framebuffers[imageIndex]->GetFramebuffer(), m_SwapChain->GetSwapChainExtend());
+            m_RenderPass->Begin(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame), m_Framebuffers[m_ImageIndex]->GetFramebuffer(), m_SwapChain->GetSwapChainExtend());
             m_Pipeline->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_SwapChain->SetViewport(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_SwapChain->SetScissor(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_IndexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->DrawIndexed(m_CurrentFrame, static_cast<uint32_t>(indices.size()));
+            
+            // ImGui
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
+
+        void EndFrame() override
+        {
+            // ImGui
+            ImGui::Render();
+            ImDrawData* drawData = ImGui::GetDrawData();
+            ImGui_ImplVulkan_RenderDrawData(drawData, m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            
             m_RenderPass->End(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->End(m_CurrentFrame);
 
@@ -172,10 +255,10 @@ namespace Magma
             VkSwapchainKHR swapChains[] = {m_SwapChain->GetSwapChain()};
             presentInfo.swapchainCount = 1;
             presentInfo.pSwapchains = swapChains;
-            presentInfo.pImageIndices = &imageIndex;
+            presentInfo.pImageIndices = &m_ImageIndex;
             presentInfo.pResults = nullptr; // Optional
 
-            result = vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo);
+            VkResult result = vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo);
             if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_FramebufferResized)
             {
                 m_FramebufferResized = false;
@@ -187,10 +270,6 @@ namespace Magma
             }
 
             m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-        }
-
-        void EndFrame() override
-        {
         }
 
     private:
@@ -234,8 +313,11 @@ namespace Magma
         std::vector<std::unique_ptr<VulkanSemaphore>> m_ImageAvailableSemaphores;
         std::vector<std::unique_ptr<VulkanSemaphore>> m_RenderFinishedSemaphores;
         std::vector<std::unique_ptr<VulkanFence>> m_InFlightFences;
+        
+        std::unique_ptr<VulkanDescriptorPool> m_ImGuiDescriptorPool;
 
         uint32_t m_CurrentFrame = 0;
+        uint32_t m_ImageIndex = 0;
         bool m_FramebufferResized = false;
     };
 

@@ -17,6 +17,12 @@ public:
 	void OnUpdate() override
 	{
 	}
+    
+    void OnImGuiRender() override
+    {
+        bool show = true;
+        ImGui::ShowDemoWindow(&show);
+    }
 };
 
 Magma::Application* Magma::CreateApplication()
