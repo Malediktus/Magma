@@ -12,6 +12,9 @@ namespace Magma
 
         virtual void BeginFrame() = 0;
         virtual void EndFrame() = 0;
+        
+        virtual void BeginGui() = 0;
+        virtual void EndGui() = 0;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window);

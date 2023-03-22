@@ -33,6 +33,9 @@ namespace Magma
 
         static void BeginFrame();
         static void EndFrame();
+        
+        static void BeginGui();
+        static void EndGui();
 
         static void DrawPyramid(const Material material, const glm::mat4 transform);
         static void DrawSphere(const Material material, const glm::mat4 transform);

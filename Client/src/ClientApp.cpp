@@ -20,8 +20,9 @@ public:
     
     void OnImGuiRender() override
     {
-        bool show = true;
-        ImGui::ShowDemoWindow(&show);
+        ImGui::Begin("Test");
+        ImGui::Text("ImGui Test Window");
+        ImGui::End();
     }
 };
 

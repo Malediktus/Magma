@@ -24,6 +24,16 @@ namespace Magma
         m_RenderingAPI->EndFrame();
     }
 
+    void Renderer::BeginGui()
+    {
+        m_RenderingAPI->BeginGui();
+    }
+
+    void Renderer::EndGui()
+    {
+        m_RenderingAPI->EndGui();
+    }
+
     void Renderer::DrawPyramid(const Material material, const glm::mat4 transform)
     {
     }

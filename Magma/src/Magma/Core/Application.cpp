@@ -20,10 +20,18 @@ namespace Magma
         while (m_Running)
         {
             m_Window->Update();
+            
             Renderer::BeginFrame();
-            OnImGuiRender();
-            OnUpdate();
+            {
+                Renderer::BeginGui();
+                {
+                    OnImGuiRender();
+                }
+                Renderer::EndGui();
+                OnUpdate();
+            }
             Renderer::EndFrame();
+            
             m_Window->Draw();
         }
 

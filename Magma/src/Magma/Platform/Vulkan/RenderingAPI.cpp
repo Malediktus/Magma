@@ -103,6 +103,7 @@ namespace Magma
             
             // ImGui init
             m_ImGuiDescriptorPool = std::unique_ptr<VulkanDescriptorPool>(new VulkanDescriptorPool(m_Device->GetDevice(), imGuiPoolSizes));
+
             ImGui::CreateContext();
             ImGui::StyleColorsDark();
             // TODO: Make window implementation independent
@@ -212,20 +213,10 @@ namespace Magma
             m_VertexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_IndexBuffer->Bind(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->DrawIndexed(m_CurrentFrame, static_cast<uint32_t>(indices.size()));
-            
-            // ImGui
-            ImGui_ImplVulkan_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
         }
 
         void EndFrame() override
         {
-            // ImGui
-            ImGui::Render();
-            ImDrawData* drawData = ImGui::GetDrawData();
-            ImGui_ImplVulkan_RenderDrawData(drawData, m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
-            
             m_RenderPass->End(m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
             m_CommandBuffers->End(m_CurrentFrame);
 
@@ -270,6 +261,20 @@ namespace Magma
             }
 
             m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        }
+        
+        void BeginGui() override
+        {
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
+        
+        void EndGui() override
+        {
+            ImGui::Render();
+            ImDrawData* drawData = ImGui::GetDrawData();
+            ImGui_ImplVulkan_RenderDrawData(drawData, m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
         }
 
     private:
