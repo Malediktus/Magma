@@ -28,10 +28,10 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 if (MAGMA_RENDERER_VULKAN)
     target_compile_definitions(${PROJECT_NAME} PRIVATE MG_VULKAN)
-    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui Vulkan::Vulkan glm::glm)
+    target_link_libraries(${PROJECT_NAME} spdlog::spdlog glfw ImGui stb_image Vulkan::Vulkan glm::glm)
 else ()
     target_compile_definitions(${PROJECT_NAME} PRIVATE MG_OPENGL)
-    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui glm::glm Glad)
+    target_link_libraries(${PROJECT_NAME} spdlog::spdlog glfw ImGui stb_image glm::glm Glad)
 endif()
 
 if (MAGMA_RENDERER_OPENGL)
@@ -39,6 +39,10 @@ project(Glad VERSION 0.0.1 DESCRIPTION "The Magma Engine Glad Build")
 add_library(${PROJECT_NAME} STATIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include)
 endif ()
+
+project(stb_image VERSION 0.0.1 DESCRIPTION "The Magma Engine stb_image Build")
+add_library(${PROJECT_NAME} STATIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image/stb_image.h ${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image/stb_image.cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image)
 
 project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
 

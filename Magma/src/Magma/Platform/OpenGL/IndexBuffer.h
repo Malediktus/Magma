@@ -17,6 +17,11 @@ namespace Magma {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
         }
 
+        ~OpenGLIndexBuffer()
+        {
+            glDeleteBuffers(1, &m_BufferId);
+        }
+
         void Bind()
         {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId);

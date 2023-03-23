@@ -21,9 +21,15 @@ namespace Magma {
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
         }
 
+        ~OpenGLVertexBuffer()
+        {
+            glDeleteBuffers(1, &m_BufferId);
+            glDeleteVertexArrays(1, &m_ArrayId);
+        }
+
         void Bind()
         {
-            glBindVertexArray(m_ArrayId);
+            glBindVertexArray(m_ArrayId); 
         }
 
     private:
