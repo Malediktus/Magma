@@ -14,7 +14,7 @@ namespace Magma {
         {
             m_VertexShaderId = glCreateShader(GL_VERTEX_SHADER);
             auto vertexShaderSource = ReadFile(vertexFilename);
-            const char* vertexShaderCSource = vertexShaderSource.data(); // TODO: Maybe unsafe to do, dont know
+            const char* vertexShaderCSource = vertexShaderSource.c_str(); // TODO: Maybe unsafe to do, dont know
             glShaderSource(m_VertexShaderId, 1, &vertexShaderCSource, NULL);
             glCompileShader(m_VertexShaderId);
 
@@ -29,7 +29,7 @@ namespace Magma {
 
             m_FragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
             auto fragmentShaderSource = ReadFile(fragmentFilename);
-            const char* fragmentShaderCSource = fragmentShaderSource.data(); // TODO: Maybe unsafe to do, dont know
+            const char* fragmentShaderCSource = fragmentShaderSource.c_str(); // TODO: Maybe unsafe to do, dont know
             glShaderSource(m_FragmentShaderId, 1, &fragmentShaderCSource, NULL);
             glCompileShader(m_FragmentShaderId);
 
@@ -53,12 +53,14 @@ namespace Magma {
                 glGetProgramInfoLog(m_ProgramId, 512, NULL, infoLog);
                 LOG_FATAL("Failed to Link Shader Program:\n{}", infoLog);
             }
+
+            glDeleteShader(m_VertexShaderId);
+            glDeleteShader(m_FragmentShaderId);
         }
 
         ~OpenGLShader()
         {
-            glDeleteShader(m_VertexShaderId);
-            glDeleteShader(m_FragmentShaderId);
+            glDeleteProgram(m_ProgramId);
         }
 
         void Bind()
@@ -67,21 +69,17 @@ namespace Magma {
         }
 
     private:
-        static const std::vector<char> ReadFile(const std::string &filename)
+        static const std::string ReadFile(const std::string &filename)
         {
             std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
             MG_ASSERT_MSG(file.is_open(), "Failed to open file!");
-
-            size_t fileSize = (size_t)file.tellg();
-            std::vector<char> buffer(fileSize);
-
             file.seekg(0);
-            file.read(buffer.data(), fileSize);
-
+            std::stringstream buffer;
+            buffer << file.rdbuf();
             file.close();
 
-            return buffer;
+            return buffer.str();
         }
 
         unsigned int m_VertexShaderId;

@@ -41,10 +41,14 @@ namespace Magma
             glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
             EventDispatcher::Subscribe<WindowResizeEvent>(std::bind(&OpenGLRenderingAPI::OnResize, this, std::placeholders::_1));
 
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            m_Shader = std::unique_ptr<OpenGLShader>(new OpenGLShader("assets/Base.vert", "assets/Base.frag"));
             m_VertexBuffer = std::unique_ptr<OpenGLVertexBuffer>(new OpenGLVertexBuffer(vertices));
             OpenGLVertex::SetVertexFormat();
             m_IndexBuffer = std::unique_ptr<OpenGLIndexBuffer>(new OpenGLIndexBuffer(indices));
-            m_Shader = std::unique_ptr<OpenGLShader>(new OpenGLShader("assets/Base.vert", "assets/Base.frag"));
 
             // ImGui
             ImGui::CreateContext();
@@ -71,6 +75,7 @@ namespace Magma
         {
             m_Shader->Bind();
             m_VertexBuffer->Bind();
+            m_IndexBuffer->Bind();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
         
