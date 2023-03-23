@@ -28,10 +28,10 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 if (MAGMA_RENDERER_VULKAN)
     target_compile_definitions(${PROJECT_NAME} PRIVATE MG_VULKAN)
-    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui Vulkan::Vulkan glm_shared)
+    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui Vulkan::Vulkan glm::glm)
 else ()
     target_compile_definitions(${PROJECT_NAME} PRIVATE MG_OPENGL)
-    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui glm_shared)
+    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui glm::glm)
 endif()
 
 project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
