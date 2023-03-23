@@ -10,7 +10,7 @@
 namespace Magma {
     class OpenGLShader {
     public:
-        OpenGLShader(const std::string &vertexFilename, const std::string &fragmentFilename)
+        OpenGLShader(const std::string& vertexFilename, const std::string& fragmentFilename)
         {
             m_VertexShaderId = glCreateShader(GL_VERTEX_SHADER);
             auto vertexShaderSource = ReadFile(vertexFilename);
@@ -67,6 +67,8 @@ namespace Magma {
         {
             glUseProgram(m_ProgramId);
         }
+
+        const unsigned int& GetId() { return m_ProgramId; }
 
     private:
         static const std::string ReadFile(const std::string &filename)

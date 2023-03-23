@@ -17,18 +17,20 @@
 #include <Magma/Platform/OpenGL/VertexBuffer.h>
 #include <Magma/Platform/OpenGL/IndexBuffer.h>
 #include <Magma/Platform/OpenGL/Shader.h>
+#include <Magma/Platform/OpenGL/Texture.h>
 
 namespace Magma
 {
     const std::vector<OpenGLVertex> vertices = {
-        {{-0.5f, -0.5f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-        {{ 0.5f,  0.5f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-        {{-0.5f,  0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+        {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+        {{ 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 
     const std::vector<uint32_t> indices = {
-        0, 1, 2, 2, 3, 0
+        0, 1, 3,
+        1, 2, 3
     };
 
     class OpenGLRenderingAPI : public RenderingAPI
@@ -45,10 +47,18 @@ namespace Magma
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
             m_Shader = std::unique_ptr<OpenGLShader>(new OpenGLShader("assets/Base.vert", "assets/Base.frag"));
             m_VertexBuffer = std::unique_ptr<OpenGLVertexBuffer>(new OpenGLVertexBuffer(vertices));
-            OpenGLVertex::SetVertexFormat();
             m_IndexBuffer = std::unique_ptr<OpenGLIndexBuffer>(new OpenGLIndexBuffer(indices));
+            m_Texture = std::unique_ptr<OpenGLTexture>(new OpenGLTexture("assets/MagmaIcon.png"));
+
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, Position));
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, Color));
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, TexCoord));
+            glEnableVertexAttribArray(2);
 
             // ImGui
             ImGui::CreateContext();
@@ -73,10 +83,12 @@ namespace Magma
 
         void EndFrame() override
         {
-            m_Shader->Bind();
             m_VertexBuffer->Bind();
             m_IndexBuffer->Bind();
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            m_Texture->Bind();
+            m_Shader->Bind();
+            glUniform1i(glGetUniformLocation(m_Shader->GetId(), "TextureId"), 0);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         }
         
         void BeginGui() override
@@ -103,6 +115,7 @@ namespace Magma
         std::unique_ptr<OpenGLVertexBuffer> m_VertexBuffer;
         std::unique_ptr<OpenGLIndexBuffer> m_IndexBuffer;
         std::unique_ptr<OpenGLShader> m_Shader;
+        std::unique_ptr<OpenGLTexture> m_Texture;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window)
