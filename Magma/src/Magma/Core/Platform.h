@@ -37,6 +37,3 @@
 #else
 #error "Unknown platform!"
 #endif
-
-// Hardcode RenderingAPI for now
-#define MG_VULKAN 1

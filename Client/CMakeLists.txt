@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
     ${GLSL_SOURCE_FILES}
 )
 
+if (MAGMA_RENDERER_VULKAN)
 if (APPLE)
     set(GLSL_COMPILER "$ENV{HOME}/VulkanSDK/1.3.239.0/macOS/bin/glslc") # FIXME: Hardcoded
 endif()
@@ -38,6 +39,7 @@ add_custom_target(
 )
 
 add_dependencies(${PROJECT_NAME} Shaders)
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} Magma)
