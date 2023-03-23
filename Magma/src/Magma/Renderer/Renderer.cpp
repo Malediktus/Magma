@@ -2,48 +2,20 @@
 
 namespace Magma
 {
-    std::shared_ptr<RenderingAPI> Renderer::m_RenderingAPI;
-
     void Renderer::Init(Window *window)
     {
-        m_RenderingAPI = RenderingAPICreate(window);
-    }
-
-    void Renderer::Shutdown()
-    {
-        m_RenderingAPI = std::shared_ptr<RenderingAPI>();
+        RenderCommand::Init(window);
     }
 
     void Renderer::BeginFrame()
     {
-        m_RenderingAPI->BeginFrame();
+        RenderCommand::Clear({0.0f, 0.0f, 0.0f, 1.0f});
+        RenderCommand::NewFrame();
     }
 
     void Renderer::EndFrame()
     {
-        m_RenderingAPI->EndFrame();
-    }
-
-    void Renderer::BeginGui()
-    {
-        m_RenderingAPI->BeginGui();
-    }
-
-    void Renderer::EndGui()
-    {
-        m_RenderingAPI->EndGui();
-    }
-
-    void Renderer::DrawPyramid(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawSphere(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawCube(const Material material, const glm::mat4 transform)
-    {
+        RenderCommand::DrawIndexed();
     }
 
     void Renderer::DrawCircle(const Material material, const glm::mat4 transform)
@@ -51,14 +23,6 @@ namespace Magma
     }
 
     void Renderer::DrawLine(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawTriangle(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawQuad(const Material material, const glm::mat4 transform)
     {
     }
 

@@ -10,11 +10,8 @@ namespace Magma
     public:
         virtual ~RenderingAPI() = default;
 
-        virtual void BeginFrame() = 0;
-        virtual void EndFrame() = 0;
-        
-        virtual void BeginGui() = 0;
-        virtual void EndGui() = 0;
+        virtual void Clear(glm::vec4 color) = 0;
+        virtual void DrawIndexed(VertexBuffer *vertexBuffer, IndexBuffer *indexBuffer, bool wireframes) = 0;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window);
