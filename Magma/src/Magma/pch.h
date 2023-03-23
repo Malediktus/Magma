@@ -17,7 +17,6 @@
 #include <map>
 #include <unordered_map>
 
-#include <easy/profiler.h>
 #include <Magma/Core/Platform.h>
 #include <Magma/Core/Logger.h>
 #include <Magma/Core/Asserts.h>

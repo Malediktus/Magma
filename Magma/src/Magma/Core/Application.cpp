@@ -8,7 +8,6 @@ namespace Magma
 {
     void Application::Run()
     {
-        EASY_FUNCTION(profiler::colors::Red);
         m_Running = true;
         Logger::Init();
         EventDispatcher::Subscribe<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
