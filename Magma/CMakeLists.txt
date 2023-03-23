@@ -31,8 +31,14 @@ if (MAGMA_RENDERER_VULKAN)
     target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui Vulkan::Vulkan glm::glm)
 else ()
     target_compile_definitions(${PROJECT_NAME} PRIVATE MG_OPENGL)
-    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui glm::glm)
+    target_link_libraries(${PROJECT_NAME} spdlog glfw ImGui glm::glm Glad)
 endif()
+
+if (MAGMA_RENDERER_OPENGL)
+project(Glad VERSION 0.0.1 DESCRIPTION "The Magma Engine Glad Build")
+add_library(${PROJECT_NAME} STATIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/src/glad.c)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include)
+endif ()
 
 project(ImGui VERSION 0.0.1 DESCRIPTION "The Magma Engine ImGui Build")
 

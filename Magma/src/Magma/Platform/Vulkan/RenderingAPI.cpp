@@ -273,8 +273,7 @@ namespace Magma
         void EndGui() override
         {
             ImGui::Render();
-            ImDrawData* drawData = ImGui::GetDrawData();
-            ImGui_ImplVulkan_RenderDrawData(drawData, m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
+            ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffers->GetCommandBuffer(m_CurrentFrame));
         }
 
     private:

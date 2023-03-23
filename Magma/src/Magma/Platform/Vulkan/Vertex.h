@@ -1,11 +1,20 @@
 #pragma once
 
+#ifdef MG_VULKAN
+
+#include <Magma/pch.h>
+
+#include <vulkan/vulkan.h>
+#include <glm/glm.hpp>
+
 namespace Magma {
-    struct VulkanVertex {
+    struct VulkanVertex
+    {
         glm::vec3 Position;
         glm::vec4 Color;
         
-        static VkVertexInputBindingDescription GetBindingDescription() {
+        static VkVertexInputBindingDescription GetBindingDescription()
+        {
             VkVertexInputBindingDescription bindingDescription{};
             bindingDescription.binding = 0;
             bindingDescription.stride = sizeof(VulkanVertex);
@@ -14,7 +23,8 @@ namespace Magma {
             return bindingDescription;
         }
         
-        static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() {
+        static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions()
+        {
             std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
@@ -29,3 +39,5 @@ namespace Magma {
         }
     };
 }
+
+#endif

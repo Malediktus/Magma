@@ -23,6 +23,9 @@ namespace Magma
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
             m_Window = glfwCreateWindow(m_Width, m_Height, title, nullptr, nullptr);
+#ifdef MG_OPENGL
+            glfwMakeContextCurrent(m_Window);
+#endif
 
             glfwSetKeyCallback(m_Window, KeyCallback);
             glfwSetMouseButtonCallback(m_Window, ButtonCallback);
