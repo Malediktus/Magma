@@ -5,15 +5,17 @@
 #include <Magma/pch.h>
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <Magma/Renderer/Shader.h>
 
 namespace Magma {
-    class OpenGLShader {
+    class OpenGLShader : public Shader
+    {
     public:
-        OpenGLShader(const std::string& vertexFilename, const std::string& fragmentFilename)
+        OpenGLShader(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
         {
             m_VertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-            auto vertexShaderSource = ReadFile(vertexFilename);
+            auto vertexShaderSource = ReadFile(vertexShaderFilename);
             const char* vertexShaderCSource = vertexShaderSource.c_str(); // TODO: Maybe unsafe to do, dont know
             glShaderSource(m_VertexShaderId, 1, &vertexShaderCSource, NULL);
             glCompileShader(m_VertexShaderId);
@@ -28,7 +30,7 @@ namespace Magma {
             }
 
             m_FragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-            auto fragmentShaderSource = ReadFile(fragmentFilename);
+            auto fragmentShaderSource = ReadFile(fragmentShaderFilename);
             const char* fragmentShaderCSource = fragmentShaderSource.c_str(); // TODO: Maybe unsafe to do, dont know
             glShaderSource(m_FragmentShaderId, 1, &fragmentShaderCSource, NULL);
             glCompileShader(m_FragmentShaderId);
@@ -63,9 +65,24 @@ namespace Magma {
             glDeleteProgram(m_ProgramId);
         }
 
-        void Bind()
+        void Bind() const override
         {
             glUseProgram(m_ProgramId);
+        }
+
+        void Unbind() const override
+        {
+            glUseProgram(0);
+        }
+
+        void UploadInt(const std::string &name, const unsigned int value) const override
+        {
+            glUniform1i(glGetUniformLocation(m_ProgramId, name.c_str()), value);
+        }
+
+        void UploadMat4(const std::string &name, const glm::mat4& value) const override
+        {
+            glUniformMatrix4fv(glGetUniformLocation(m_ProgramId, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
         }
 
         const unsigned int& GetId() { return m_ProgramId; }
@@ -88,6 +105,11 @@ namespace Magma {
         unsigned int m_FragmentShaderId;
         unsigned int m_ProgramId;
     };
+
+    std::shared_ptr<Shader> ShaderCreate(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+    {
+        return std::shared_ptr<Shader>(new OpenGLShader(vertexShaderFilename, fragmentShaderFilename));
+    }
 }
 
 #endif

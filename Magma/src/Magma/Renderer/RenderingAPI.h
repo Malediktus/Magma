@@ -2,6 +2,8 @@
 
 #include <Magma/pch.h>
 #include <Magma/Core/Window.h>
+#include <Magma/Renderer/VertexBuffer.h>
+#include <Magma/Renderer/IndexBuffer.h>
 
 namespace Magma
 {
@@ -10,11 +12,9 @@ namespace Magma
     public:
         virtual ~RenderingAPI() = default;
 
-        virtual void BeginFrame() = 0;
-        virtual void EndFrame() = 0;
-        
-        virtual void BeginGui() = 0;
-        virtual void EndGui() = 0;
+        virtual void Clear(const glm::vec4 &color) const = 0;
+        virtual void DrawIndexed(const size_t numIndices, const bool wireframes) const = 0;
+        virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const = 0;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window);
