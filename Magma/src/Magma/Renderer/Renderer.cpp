@@ -2,71 +2,60 @@
 
 namespace Magma
 {
-    std::shared_ptr<RenderingAPI> Renderer::m_RenderingAPI;
-
     void Renderer::Init(Window *window)
     {
-        m_RenderingAPI = RenderingAPICreate(window);
-    }
-
-    void Renderer::Shutdown()
-    {
-        m_RenderingAPI = std::shared_ptr<RenderingAPI>();
+        RenderCommand::Init(window);
+        RenderCommand::SetViewport(0, 0, window->GetWidth(), window->GetHeight());
     }
 
     void Renderer::BeginFrame()
     {
-        m_RenderingAPI->BeginFrame();
+        RenderCommand::Clear({0.0f, 0.0f, 0.0f, 1.0f});
     }
 
     void Renderer::EndFrame()
     {
-        m_RenderingAPI->EndFrame();
     }
 
-    void Renderer::BeginGui()
+    void Renderer::DrawTexture(const Texture2D &texture, const Material &material, const glm::mat4 &transform)
     {
-        m_RenderingAPI->BeginGui();
+        const std::vector<Vertex> Vertices = {
+            {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}},
+            {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+            {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
+            {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}}
+        };
+
+        const std::vector<uint32_t> Indicies = {
+            0, 1, 3,
+            1, 2, 3
+        };
+
+        std::vector<RawVertex> vertices;
+        vertices.resize(Vertices.size());
+        for (size_t i = 0; i < Vertices.size(); i++)
+        {
+            vertices[i].Position = Vertices[i].Position;
+            vertices[i].TexCoords = Vertices[i].TexCoords;
+            vertices[i].Color = material.Color;
+        }
+
+        texture.Bind();
+        RenderCommand::DrawIndexed(vertices, Indicies, transform);
     }
 
-    void Renderer::EndGui()
+    void Renderer::DrawMesh(const Mesh& mesh, const Texture2D& texture, const Material& material, const glm::mat4& transform)
     {
-        m_RenderingAPI->EndGui();
-    }
+        std::vector<RawVertex> vertices;
+        vertices.resize(mesh.Vertices.size());
+        for (size_t i = 0; i < mesh.Vertices.size(); i++)
+        {
+            vertices[i].Position = mesh.Vertices[i].Position;
+            vertices[i].TexCoords = mesh.Vertices[i].TexCoords;
+            vertices[i].Color = material.Color;
+        }
 
-    void Renderer::DrawPyramid(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawSphere(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawCube(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawCircle(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawLine(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawTriangle(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawQuad(const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawTexture(const std::string texture, const Material material, const glm::mat4 transform)
-    {
-    }
-
-    void Renderer::DrawMesh(const Mesh mesh, const std::string texture, const Material material, const glm::mat4 transform)
-    {
+        texture.Bind();
+        RenderCommand::DrawIndexed(vertices, mesh.Indicies, transform);
     }
 }

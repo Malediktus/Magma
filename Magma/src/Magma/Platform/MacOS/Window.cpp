@@ -22,6 +22,12 @@ namespace Magma
 #ifndef MG_OPENGL
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
+#ifdef MG_OPENGL
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
             m_Window = glfwCreateWindow(m_Width, m_Height, title, nullptr, nullptr);
 #ifdef MG_OPENGL
             glfwMakeContextCurrent(m_Window);
