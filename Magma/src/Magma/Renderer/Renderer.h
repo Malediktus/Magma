@@ -34,9 +34,8 @@ namespace Magma
         static void BeginFrame();
         static void EndFrame();
 
-        static void DrawCircle(const Material material, const glm::mat4 transform);
-        static void DrawLine(const Material material, const glm::mat4 transform);
-        static void DrawTexture(const std::string texture, const Material material, const glm::mat4 transform);
-        static void DrawMesh(const Mesh mesh, const std::string texture, const Material material, const glm::mat4 transform);
+        static void DrawTexture(const std::string &texture, const Material &material, const glm::mat4 &transform);
+        static void DrawMesh(const Mesh& mesh, const Material& material, const glm::mat4& transform);
+        static void DrawMesh(const Mesh &mesh, const std::string &texture, const Material &material, const glm::mat4 &transform);
     };
 }

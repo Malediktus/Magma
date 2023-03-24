@@ -8,12 +8,10 @@ namespace Magma
     {
     public:
         virtual ~IndexBuffer() = default;
-        virtual void Append(std::vector<uint32_t> data) = 0;
-        virtual void Reset() = 0;
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
-        virtual void *GetNative() const = 0;
+        virtual size_t Size() const = 0;
     };
 
-    std::shared_ptr<IndexBuffer> IndexBufferCreate();
+    std::shared_ptr<IndexBuffer> IndexBufferCreate(const std::vector<uint32_t> &indices);
 }

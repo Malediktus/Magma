@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Magma/pch.h>
+#include <glm/glm.hpp>
 
 namespace Magma
 {
@@ -16,12 +17,9 @@ namespace Magma
     {
     public:
         virtual ~VertexBuffer() = default;
-        virtual void Append(std::vector<RawVertex> data) = 0;
-        virtual void Reset() = 0;
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
-        virtual void *GetNative() const = 0;
     };
 
-    std::shared_ptr<VertexBuffer> VertexBufferCreate();
+    std::shared_ptr<VertexBuffer> VertexBufferCreate(const std::vector<RawVertex> &vertices);
 }

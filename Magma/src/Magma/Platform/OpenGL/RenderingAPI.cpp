@@ -4,35 +4,58 @@
 #include <glad/glad.h>
 // TODO: Make window implementation independent
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
-#include <Magma/Event/Event.h>
 #include <Magma/Renderer/RenderingAPI.h>
 
-#include <Magma/Platform/OpenGL/Vertex.h>
-#include <Magma/Platform/OpenGL/VertexBuffer.h>
-#include <Magma/Platform/OpenGL/IndexBuffer.h>
-#include <Magma/Platform/OpenGL/Shader.h>
-#include <Magma/Platform/OpenGL/Texture.h>
+void APIENTRY glDebugOutput(GLenum source,
+    GLenum type,
+    unsigned int id,
+    GLenum severity,
+    GLsizei length,
+    const char* message,
+    const void* userParam)
+{
+    // ignore non-significant error/warning codes
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+    std::cout << "---------------" << std::endl;
+    std::cout << "Debug message (" << id << "): " << message << std::endl;
+
+    switch (source)
+    {
+    case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+    case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+    case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+    case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+    } std::cout << std::endl;
+
+    switch (type)
+    {
+    case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break;
+    case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+    case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+    case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+    case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+    case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+    case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+    } std::cout << std::endl;
+
+    switch (severity)
+    {
+    case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+    case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+    } std::cout << std::endl;
+    std::cout << std::endl;
+}
 
 namespace Magma
 {
-    const std::vector<OpenGLVertex> vertices = {
-        {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-    };
-
-    const std::vector<uint32_t> indices = {
-        0, 1, 3,
-        1, 2, 3
-    };
-
     class OpenGLRenderingAPI : public RenderingAPI
     {
     public:
@@ -41,81 +64,51 @@ namespace Magma
         {
             MG_ASSERT_MSG(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress), "Failed to initialize Glad!");
             glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-            EventDispatcher::Subscribe<WindowResizeEvent>(std::bind(&OpenGLRenderingAPI::OnResize, this, std::placeholders::_1));
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            m_Shader = std::unique_ptr<OpenGLShader>(new OpenGLShader("assets/Base.vert", "assets/Base.frag"));
-            m_VertexBuffer = std::unique_ptr<OpenGLVertexBuffer>(new OpenGLVertexBuffer(vertices));
-            m_IndexBuffer = std::unique_ptr<OpenGLIndexBuffer>(new OpenGLIndexBuffer(indices));
-            m_Texture = std::unique_ptr<OpenGLTexture>(new OpenGLTexture("assets/MagmaIcon.png"));
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, Position));
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, Color));
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(OpenGLVertex, TexCoord));
-            glEnableVertexAttribArray(2);
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageCallback(glDebugOutput, nullptr);
+            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
             // ImGui
-            ImGui::CreateContext();
-            ImGui::StyleColorsDark();
-            ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) m_Window->GetWindowEventHandle(), true);
-            ImGui_ImplOpenGL3_Init("#version 120");
+            // ImGui::CreateContext();
+            // ImGui::StyleColorsDark();
+            // ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) m_Window->GetWindowEventHandle(), true);
+            // ImGui_ImplOpenGL3_Init("#version 120");
         }
 
         ~OpenGLRenderingAPI()
         {
             // ImGui
-            ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
+            // ImGui_ImplOpenGL3_Shutdown();
+            // ImGui_ImplGlfw_Shutdown();
+            // ImGui::DestroyContext();
         }
 
-        void BeginFrame() override
+        void Clear(const glm::vec4& color) const override
         {
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(color.r, color.g, color.b, color.a);
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        void EndFrame() override
+        void DrawIndexed(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const bool wireframes) const override
         {
-            m_VertexBuffer->Bind();
-            m_IndexBuffer->Bind();
-            m_Texture->Bind();
-            m_Shader->Bind();
-            glUniform1i(glGetUniformLocation(m_Shader->GetId(), "TextureId"), 0);
-            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+            vertexBuffer->Bind();
+            indexBuffer->Bind();
+            glDrawElements(GL_TRIANGLES, indexBuffer->Size(), GL_UNSIGNED_INT, nullptr);
         }
-        
-        void BeginGui() override
+
+        void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const override
         {
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-        }
-        
-        void EndGui() override
-        {
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            glViewport(x, y, width, height);
         }
 
     private:
-        void OnResize(const Event &e)
-        {
-            glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-        }
-
         Window *m_Window;
-
-        std::unique_ptr<OpenGLVertexBuffer> m_VertexBuffer;
-        std::unique_ptr<OpenGLIndexBuffer> m_IndexBuffer;
-        std::unique_ptr<OpenGLShader> m_Shader;
-        std::unique_ptr<OpenGLTexture> m_Texture;
     };
 
     std::shared_ptr<RenderingAPI> RenderingAPICreate(Window *window)

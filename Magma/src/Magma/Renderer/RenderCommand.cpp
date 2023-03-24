@@ -1,40 +1,41 @@
 #include <Magma/Renderer/RenderCommand.h>
+#include <Magma/Renderer/VertexBuffer.h>
+#include <Magma/Renderer/IndexBuffer.h>
 
 namespace Magma
 {
     std::shared_ptr<RenderingAPI> RenderCommand::m_RenderingAPI;
-    std::shared_ptr<VertexBuffer> RenderCommand::m_VertexBuffer;
-    std::shared_ptr<IndexBuffer> RenderCommand::m_IndexBuffer;
+    std::shared_ptr<Shader> RenderCommand::m_Shader;
 
-    void RenderCommand::Init(const Window *window)
+    void RenderCommand::Init(Window *window)
     {
         m_RenderingAPI = RenderingAPICreate(window);
-        m_VertexBuffer = VertexBufferCreate();
-        m_IndexBuffer = IndexBufferCreate();
+        m_Shader = ShaderCreate("assets/Base.vert", "assets/Base.frag");
     }
 
-    void RenderCommand::Clear(glm::vec4 color)
+    void RenderCommand::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
-        m_RenderingAPI->Clear();
+        m_RenderingAPI->SetViewport(x, y, width, height);
     }
 
-    void RenderCommand::NewFrame()
+    void RenderCommand::Clear(const glm::vec4 &color)
     {
-        m_VertexBuffer->Reset();
-        m_IndexBuffer->Reset();
+        m_RenderingAPI->Clear(color);
     }
 
-    void RenderCommand::Submit(Mesh mesh, glm::mat4 transform)
+    void RenderCommand::DrawIndexed(const std::vector<RawVertex>& vertices, const std::vector<uint32_t>& indices, const glm::mat4& transform)
     {
+        std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
+        std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
+        m_Shader->Bind();
+        m_RenderingAPI->DrawIndexed(vertexBuffer.get(), indexBuffer.get(), false);
     }
 
-    void RenderCommand::DrawIndexed()
+    void RenderCommand::DrawIndexedWireframe(const std::vector<RawVertex>& vertices, const std::vector<uint32_t>& indices, const glm::mat4& transform)
     {
-        m_RenderingAPI->DrawIndex(m_VertexBuffer.get(), m_IndexBuffer.get(), false);
-    }
-
-    void RenderCommand::DrawIndexedWireframe()
-    {
-        m_RenderingAPI->DrawIndex(m_VertexBuffer.get(), m_IndexBuffer.get(), true);
+        std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
+        std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
+        m_Shader->Bind();
+        m_RenderingAPI->DrawIndexed(vertexBuffer.get(), indexBuffer.get(), true);
     }
 }
