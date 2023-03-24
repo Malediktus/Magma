@@ -95,11 +95,13 @@ namespace Magma
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        void DrawIndexed(const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, const bool wireframes) const override
+        void DrawIndexed(const size_t numIndices, const bool wireframes) const override
         {
-            vertexBuffer->Bind();
-            indexBuffer->Bind();
-            glDrawElements(GL_TRIANGLES, indexBuffer->Size(), GL_UNSIGNED_INT, nullptr);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            if (wireframes)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+            glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         }
 
         void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const override

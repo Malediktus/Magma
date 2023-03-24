@@ -4,6 +4,7 @@
 #include <Magma/Core/Window.h>
 #include <Magma/Renderer/RenderingAPI.h>
 #include <Magma/Renderer/RenderCommand.h>
+#include <Magma/Renderer/Texture2D.h>
 
 #include <glm/glm.hpp>
 
@@ -34,8 +35,7 @@ namespace Magma
         static void BeginFrame();
         static void EndFrame();
 
-        static void DrawTexture(const std::string &texture, const Material &material, const glm::mat4 &transform);
-        static void DrawMesh(const Mesh& mesh, const Material& material, const glm::mat4& transform);
-        static void DrawMesh(const Mesh &mesh, const std::string &texture, const Material &material, const glm::mat4 &transform);
+        static void DrawTexture(const Texture2D &texture, const Material &material, const glm::mat4 &transform);
+        static void DrawMesh(const Mesh &mesh, const Texture2D &texture, const Material &material, const glm::mat4 &transform);
     };
 }

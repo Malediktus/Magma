@@ -15,14 +15,12 @@ namespace Magma {
             glBindBuffer(GL_ARRAY_BUFFER, m_BufferId);
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)offsetof(RawVertex, Position));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(RawVertex, Position));
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)offsetof(RawVertex, Color));
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(RawVertex, Color));
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)offsetof(RawVertex, TexCoords));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)offsetof(RawVertex, TexCoords));
             glEnableVertexAttribArray(2);
-            glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)offsetof(RawVertex, TextureId));
-            glEnableVertexAttribArray(3);
         }
 
         ~OpenGLVertexBuffer() 

@@ -36,12 +36,14 @@ namespace Magma
         Renderer::Init(m_Window.get());
         OnInit();
 
+        std::shared_ptr<Texture2D> texture = Texture2DCreate("assets/MagmaIcon.png");
+
         while (m_Running)
         {
             m_Window->Update();
             
             Renderer::BeginFrame();
-            Renderer::DrawMesh(mesh, material, transform);
+            Renderer::DrawMesh(mesh, *texture.get(), material, transform);
             Renderer::EndFrame();
             
             m_Window->Draw();

@@ -28,7 +28,11 @@ namespace Magma
         std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
         m_Shader->Bind();
-        m_RenderingAPI->DrawIndexed(vertexBuffer.get(), indexBuffer.get(), false);
+        m_Shader->UploadInt("TextureId", 0);
+        m_Shader->UploadMat4("Transform", transform);
+        vertexBuffer->Bind();
+        indexBuffer->Bind();
+        m_RenderingAPI->DrawIndexed(indexBuffer->Size(), false);
     }
 
     void RenderCommand::DrawIndexedWireframe(const std::vector<RawVertex>& vertices, const std::vector<uint32_t>& indices, const glm::mat4& transform)
@@ -36,6 +40,10 @@ namespace Magma
         std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
         m_Shader->Bind();
-        m_RenderingAPI->DrawIndexed(vertexBuffer.get(), indexBuffer.get(), true);
+        m_Shader->UploadInt("TextureId", 0);
+        m_Shader->UploadMat4("Transform", transform);
+        vertexBuffer->Bind();
+        indexBuffer->Bind();
+        m_RenderingAPI->DrawIndexed(indexBuffer->Size(), true);
     }
 }

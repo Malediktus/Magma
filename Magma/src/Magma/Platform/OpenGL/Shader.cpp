@@ -5,6 +5,7 @@
 #include <Magma/pch.h>
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <Magma/Renderer/Shader.h>
 
 namespace Magma {
@@ -72,6 +73,16 @@ namespace Magma {
         void Unbind() const override
         {
             glUseProgram(0);
+        }
+
+        void UploadInt(const std::string &name, const unsigned int value) const override
+        {
+            glUniform1i(glGetUniformLocation(m_ProgramId, name.c_str()), value);
+        }
+
+        void UploadMat4(const std::string &name, const glm::mat4& value) const override
+        {
+            glUniformMatrix4fv(glGetUniformLocation(m_ProgramId, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
         }
 
         const unsigned int& GetId() { return m_ProgramId; }
