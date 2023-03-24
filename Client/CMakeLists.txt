@@ -4,8 +4,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fdeclspec -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fdeclspec -fPIC")
 
 file (GLOB_RECURSE GLSL_SOURCE_FILES
-    "assets/*.frag"
-    "assets/*.vert"
+    "assets/Vulkan/*.frag"
+    "assets/Vulkan/*.vert"
 )
 
 file (GLOB_RECURSE CPP_SOURCE_FILES
@@ -18,10 +18,8 @@ add_executable(${PROJECT_NAME}
     ${GLSL_SOURCE_FILES}
 )
 
-if (MAGMA_RENDERER_VULKAN)
 if (APPLE)
-    set(GLSL_COMPILER "$ENV{HOME}/VulkanSDK/1.3.239.0/macOS/bin/glslc") # FIXME: Hardcoded
-endif()
+set(GLSL_COMPILER "$ENV{HOME}/VulkanSDK/1.3.239.0/macOS/bin/glslc") # FIXME: Hardcoded
 
 foreach(GLSL ${GLSL_SOURCE_FILES})
     set(SPIRV "${GLSL}.spv")
@@ -39,10 +37,12 @@ add_custom_target(
 )
 
 add_dependencies(${PROJECT_NAME} Shaders)
-endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} Magma)
+else()
+message(STATUS "Please compile shaders manually, automic shader compilation is only supported on macos currently")
+endif()
 
 if (MSVC)
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/assets/)
