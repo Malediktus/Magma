@@ -42,6 +42,11 @@ file (GLOB_RECURSE PLATFORM_OPENGL_SOURCE_FILES
     "src/Magma/Platform/OpenGL/*.h"
 )
 
+file (GLOB_RECURSE PLATFORM_VULKAN_SOURCE_FILES
+    "src/Magma/Platform/Vulkan/*.cpp"
+    "src/Magma/Platform/Vulkan/*.h"
+)
+
 file (GLOB_RECURSE RENDERER_SOURCE_FILES
     "src/Magma/Renderer/*.cpp"
     "src/Magma/Renderer/*.h"
@@ -56,6 +61,7 @@ add_library(${PROJECT_NAME} STATIC
     ${PLATFORM_WINDOWS_SOURCE_FILES}
     ${PLATFORM_MACOS_SOURCE_FILES}
     ${PLATFORM_OPENGL_SOURCE_FILES}
+    ${PLATFORM_VULKAN_SOURCE_FILES}
     ${RENDERER_SOURCE_FILES}
 )
 
@@ -66,6 +72,7 @@ source_group("Platform/Linux" FILES ${PLATFORM_LINUX_SOURCE_FILES})
 source_group("Platform/Windows" FILES ${PLATFORM_WINDOWS_SOURCE_FILES})
 source_group("Platform/MacOS" FILES ${PLATFORM_MACOS_SOURCE_FILES})
 source_group("Platform/OpenGL" FILES ${PLATFORM_OPENGL_SOURCE_FILES})
+source_group("Platform/Vulkan" FILES ${PLATFORM_VULKAN_SOURCE_FILES})
 source_group("Renderer" FILES ${RENDERER_SOURCE_FILES})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
