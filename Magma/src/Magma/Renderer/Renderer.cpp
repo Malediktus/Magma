@@ -46,7 +46,7 @@ namespace Magma
         }
 
         texture.Bind();
-        RenderCommand::DrawIndexed(vertices, Indicies, transform);
+        RenderCommand::DrawIndexed(vertices, Indicies, transform, true);
     }
 
     void Renderer::DrawMesh(const Mesh &mesh, const Texture2D &texture, const Material &material, const glm::mat4 &transform)
@@ -61,7 +61,21 @@ namespace Magma
         }
 
         texture.Bind();
-        RenderCommand::DrawIndexed(vertices, mesh.Indicies, transform);
+        RenderCommand::DrawIndexed(vertices, mesh.Indicies, transform, true);
+    }
+
+    void Renderer::DrawMesh(const Mesh &mesh, const Material &material, const glm::mat4 &transform)
+    {
+        std::vector<RawVertex> vertices;
+        vertices.resize(mesh.Vertices.size());
+        for (size_t i = 0; i < mesh.Vertices.size(); i++)
+        {
+            vertices[i].Position = mesh.Vertices[i].Position;
+            vertices[i].TexCoords = mesh.Vertices[i].TexCoords;
+            vertices[i].Color = material.Color;
+        }
+
+        RenderCommand::DrawIndexed(vertices, mesh.Indicies, transform, false);
     }
 
     void Renderer::OnResize(const Event &e)

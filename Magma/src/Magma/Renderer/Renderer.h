@@ -39,6 +39,7 @@ namespace Magma
 
         static void DrawTexture(const Texture2D &texture, const Material &material, const glm::mat4 &transform);
         static void DrawMesh(const Mesh &mesh, const Texture2D &texture, const Material &material, const glm::mat4 &transform);
+        static void DrawMesh(const Mesh &mesh, const Material &material, const glm::mat4 &transform);
         
     private:
         static void OnResize(const Event &e);

@@ -6,8 +6,8 @@ file (GLOB_RECURSE GLSL_SPIRV_SOURCE_FILES
 )
 
 file (GLOB_RECURSE GLSL_SOURCE_FILES
-    "assets/*.frag"
-    "assets/*.vert"
+    "assets/OpenGL/*.frag"
+    "assets/OpenGL/*.vert"
 )
 
 file (GLOB_RECURSE CPP_SOURCE_FILES

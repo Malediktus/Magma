@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Magma/Event/Event.h>
+#include <Magma/Event/KeyCode.h>
 #include <Magma/Core/Input.h>
 
 namespace Magma
@@ -69,6 +70,23 @@ namespace Magma
             EventDispatcher::Subscribe<MouseMoveEvent>(std::bind(&FPSCamera::OnMouseMoved, this, std::placeholders::_1));
         }
         
+        void MoveFront(float amount) {
+            
+            Update();
+        }
+
+        void MoveSideways(float amount) {
+            Translate(glm::normalize(glm::cross(m_LookAt, m_Up)) * amount);
+            Update();
+        }
+        
+    protected:
+        void Update() override
+        {
+            m_View = glm::lookAt(m_Position, m_Position + m_LookAt, m_Up);
+            m_ViewProj = m_Projection * m_View;
+        }
+        
         void OnMouseMoved(const Event &e)
         {
             const MouseMoveEvent &moveEvent = static_cast<const MouseMoveEvent&>(e);
@@ -92,13 +110,6 @@ namespace Magma
             
             m_OldMouseX = moveEvent.GetX();
             m_OldMouseY = moveEvent.GetY();
-        }
-        
-    protected:
-        void Update() override
-        {
-            m_View = glm::lookAt(m_Position, m_Position + m_LookAt, m_Up);
-            m_ViewProj = m_Projection * m_View;
         }
         
         const float m_MouseSensitivity = 0.3f;

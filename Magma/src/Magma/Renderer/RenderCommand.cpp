@@ -5,21 +5,24 @@
 namespace Magma
 {
     std::shared_ptr<RenderingAPI> RenderCommand::m_RenderingAPI;
-    std::shared_ptr<Shader> RenderCommand::m_Shader;
+    std::shared_ptr<Shader> RenderCommand::m_BaseShader;
+    std::shared_ptr<Shader> RenderCommand::m_TextureShader;
     std::unique_ptr<Camera> RenderCommand::m_Camera;
 
     void RenderCommand::Init(Window *window)
     {
         m_RenderingAPI = RenderingAPICreate(window);
-        m_Shader = ShaderCreate("assets/Base.vert", "assets/Base.frag");
-        m_Camera = std::unique_ptr<Camera>(new Camera(90.0f, window->GetWidth(), window->GetHeight()));
+        m_BaseShader = ShaderCreate("assets/OpenGL/Base.vert", "assets/OpenGL/Base.frag");
+        m_TextureShader = ShaderCreate("assets/OpenGL/Texture.vert", "assets/OpenGL/Texture.frag");
+        m_Camera = std::unique_ptr<Camera>(new FPSCamera(90.0f, window->GetWidth(), window->GetHeight()));
         m_Camera->Translate(glm::vec3(0.0f, 0.0f, 2.0f));
         EventDispatcher::Subscribe<WindowResizeEvent>(OnReisze);
     }
 
     void RenderCommand::Shutdown()
     {
-        m_Shader.reset();
+        m_TextureShader.reset();
+        m_BaseShader.reset();
         m_RenderingAPI.reset();
     }
 
@@ -33,26 +36,53 @@ namespace Magma
         m_RenderingAPI->Clear(color);
     }
 
-    void RenderCommand::DrawIndexed(const std::vector<RawVertex> &vertices, const std::vector<uint32_t> &indices, const glm::mat4 &transform)
+    void RenderCommand::DrawIndexed(const std::vector<RawVertex> &vertices, const std::vector<uint32_t> &indices, const glm::mat4 &transform, const bool useTexture)
     {
+        FPSCamera* fpsCam = (FPSCamera*)m_Camera.get();
+        if (Input::GetKey(KeyCode::W))
+            fpsCam->MoveFront(0.2f);
+        else if (Input::GetKey(KeyCode::S))
+            fpsCam->MoveFront(-0.2f);
+        else if (Input::GetKey(KeyCode::A))
+            fpsCam->MoveSideways(0.2f);
+        else if (Input::GetKey(KeyCode::D))
+            fpsCam->MoveSideways(-0.2f);
+        
         std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
-        m_Shader->Bind();
-        m_Shader->UploadInt("TextureId", 0);
         glm::mat modelViewProj = transform * m_Camera->GetViewProj();
-        m_Shader->UploadMat4("uModelViewProj", modelViewProj);
+        if (useTexture)
+        {
+            m_TextureShader->Bind();
+            m_TextureShader->UploadInt("TextureId", 0);
+            m_TextureShader->UploadMat4("uModelViewProj", modelViewProj);
+        }
+        else
+        {
+            m_BaseShader->Bind();
+            m_BaseShader->UploadMat4("uModelViewProj", modelViewProj);
+        }
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), false);
     }
 
-    void RenderCommand::DrawIndexedWireframe(const std::vector<RawVertex> &vertices, const std::vector<uint32_t> &indices, const glm::mat4 &transform)
+    void RenderCommand::DrawIndexedWireframe(const std::vector<RawVertex> &vertices, const std::vector<uint32_t> &indices, const glm::mat4 &transform, const bool useTexture)
     {
         std::shared_ptr<VertexBuffer> vertexBuffer = VertexBufferCreate(vertices);
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
-        m_Shader->Bind();
-        m_Shader->UploadInt("TextureId", 0);
-        m_Shader->UploadMat4("uModel", transform);
+        glm::mat modelViewProj = transform * m_Camera->GetViewProj();
+        if (useTexture)
+        {
+            m_TextureShader->Bind();
+            m_TextureShader->UploadInt("TextureId", 0);
+            m_TextureShader->UploadMat4("uModelViewProj", modelViewProj);
+        }
+        else
+        {
+            m_BaseShader->Bind();
+            m_BaseShader->UploadMat4("uModelViewProj", modelViewProj);
+        }
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), true);

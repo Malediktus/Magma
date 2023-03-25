@@ -9,14 +9,62 @@ RenderingAPIType currentRenderingAPI = RenderingAPIType::OpenGL;
 namespace Magma
 {
     const std::vector<Vertex> vertices = {
-        {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
-        {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}}};
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+
+        {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f}}};
 
     const std::vector<uint32_t> indices = {
         0, 1, 2,
-        1, 2, 3};
+        3, 4, 5,
+        6, 7, 8,
+        9, 10, 11,
+        12, 13, 14,
+        15, 16, 17,
+        18, 19, 20,
+        21, 22, 23,
+        24, 25, 26,
+        27, 28, 29,
+        30, 31, 32,
+        33, 34, 35
+    };
 
     Mesh mesh;
     Material material;
@@ -26,7 +74,7 @@ namespace Magma
     {
         mesh.Vertices = vertices;
         mesh.Indicies = indices;
-        material.Color = {1.0f, 1.0f, 1.0f, 1.0f};
+        material.Color = {0.3f, 0.3f, 0.3f, 1.0f};
 
         m_Running = true;
         Logger::Init();
@@ -36,14 +84,12 @@ namespace Magma
         Renderer::Init(m_Window.get());
         OnInit();
 
-        std::shared_ptr<Texture2D> texture = Texture2DCreate("assets/MagmaIcon.png");
-
         while (m_Running)
         {
             m_Window->Update();
 
             Renderer::BeginFrame();
-            Renderer::DrawMesh(mesh, *texture.get(), material, transform);
+            Renderer::DrawMesh(mesh, material, transform);
             Renderer::EndFrame();
 
             m_Window->Draw();
