@@ -19,8 +19,6 @@ namespace Magma
             : m_Title(title), m_Width(width), m_Height(height)
         {
             glfwInit();
-            if (currentRenderingAPI == RenderingAPIType::Vulkan)
-                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
             if (currentRenderingAPI == RenderingAPIType::OpenGL)
             {

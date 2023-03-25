@@ -40,8 +40,7 @@
 
 enum RenderingAPIType
 {
-    OpenGL,
-    Vulkan
+    OpenGL
 };
 
 extern RenderingAPIType currentRenderingAPI; // Defined in Application.cpp
