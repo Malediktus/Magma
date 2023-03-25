@@ -35,7 +35,7 @@ namespace Magma
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
         m_Shader->Bind();
         m_Shader->UploadInt("TextureId", 0);
-        m_Shader->UploadMat4("Transform", transform);
+        m_Shader->UploadMat4("uModel", transform);
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), false);
@@ -47,7 +47,7 @@ namespace Magma
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
         m_Shader->Bind();
         m_Shader->UploadInt("TextureId", 0);
-        m_Shader->UploadMat4("Transform", transform);
+        m_Shader->UploadMat4("uModel", transform);
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), true);

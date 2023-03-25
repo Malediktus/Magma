@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Magma/pch.h>
 #include <Magma/Renderer/RenderingAPI.h>
 
 namespace Magma

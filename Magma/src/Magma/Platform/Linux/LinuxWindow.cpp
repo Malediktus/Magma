@@ -89,7 +89,7 @@ namespace Magma
 
         VkResult CreateVulkanWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const override
         {
-            return glfwCreateWindowSurface(instance, mWindow, nullptr, surface);
+            return glfwCreateWindowSurface(instance, m_Window, nullptr, surface);
         }
 
         void Update() override

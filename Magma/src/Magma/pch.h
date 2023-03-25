@@ -16,6 +16,7 @@
 #include <unordered_set>
 #include <map>
 #include <unordered_map>
+#include <optional>
 
 #include <Magma/Core/Platform.h>
 #include <Magma/Core/Logger.h>

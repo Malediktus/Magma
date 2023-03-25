@@ -16,6 +16,7 @@ namespace Magma
             return std::shared_ptr<IndexBuffer>(new VulkanIndexBuffer(indices));
         default:
             MG_ASSERT_NO_MSG(false);
+            return std::shared_ptr<IndexBuffer>();
         }
     }
 }

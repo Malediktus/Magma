@@ -16,6 +16,7 @@ namespace Magma
             return std::shared_ptr<Shader>(new VulkanShader(vertexShaderFilename, fragmentShaderFilename));
         default:
             MG_ASSERT_NO_MSG(false);
+            return std::shared_ptr<Shader>();
         }
     }
 }

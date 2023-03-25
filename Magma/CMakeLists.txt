@@ -47,6 +47,11 @@ file (GLOB_RECURSE RENDERER_SOURCE_FILES
     "src/Magma/Renderer/*.h"
 )
 
+file (GLOB_RECURSE SCENE_SOURCE_FILES
+    "src/Magma/Scene/*.cpp"
+    "src/Magma/Scene/*.h"
+)
+
 add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h
@@ -58,6 +63,7 @@ add_library(${PROJECT_NAME} STATIC
     ${PLATFORM_OPENGL_SOURCE_FILES}
     ${PLATFORM_VULKAN_SOURCE_FILES}
     ${RENDERER_SOURCE_FILES}
+    ${SCENE_SOURCE_FILES}
 )
 
 source_group("Interface" FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h)
@@ -69,11 +75,13 @@ source_group("Platform/MacOS" FILES ${PLATFORM_MACOS_SOURCE_FILES})
 source_group("Platform/OpenGL" FILES ${PLATFORM_OPENGL_SOURCE_FILES})
 source_group("Platform/Vulkan" FILES ${PLATFORM_VULKAN_SOURCE_FILES})
 source_group("Renderer" FILES ${RENDERER_SOURCE_FILES})
+source_group("Scene" FILES ${SCENE_SOURCE_FILES})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUG)
 endif()
 
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERTIONS_ENABLED)
