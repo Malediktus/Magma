@@ -37,11 +37,6 @@ file (GLOB_RECURSE PLATFORM_OPENGL_SOURCE_FILES
     "src/Magma/Platform/OpenGL/*.h"
 )
 
-file (GLOB_RECURSE PLATFORM_VULKAN_SOURCE_FILES
-    "src/Magma/Platform/Vulkan/*.cpp"
-    "src/Magma/Platform/Vulkan/*.h"
-)
-
 file (GLOB_RECURSE RENDERER_SOURCE_FILES
     "src/Magma/Renderer/*.cpp"
     "src/Magma/Renderer/*.h"
@@ -61,7 +56,6 @@ add_library(${PROJECT_NAME} STATIC
     ${PLATFORM_WINDOWS_SOURCE_FILES}
     ${PLATFORM_MACOS_SOURCE_FILES}
     ${PLATFORM_OPENGL_SOURCE_FILES}
-    ${PLATFORM_VULKAN_SOURCE_FILES}
     ${RENDERER_SOURCE_FILES}
     ${SCENE_SOURCE_FILES}
 )
@@ -73,7 +67,6 @@ source_group("Platform/Linux" FILES ${PLATFORM_LINUX_SOURCE_FILES})
 source_group("Platform/Windows" FILES ${PLATFORM_WINDOWS_SOURCE_FILES})
 source_group("Platform/MacOS" FILES ${PLATFORM_MACOS_SOURCE_FILES})
 source_group("Platform/OpenGL" FILES ${PLATFORM_OPENGL_SOURCE_FILES})
-source_group("Platform/Vulkan" FILES ${PLATFORM_VULKAN_SOURCE_FILES})
 source_group("Renderer" FILES ${RENDERER_SOURCE_FILES})
 source_group("Scene" FILES ${SCENE_SOURCE_FILES})
 
@@ -86,7 +79,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERTIONS_ENABLED)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} spdlog::spdlog glfw ImGui stb_image Vulkan::Vulkan glm::glm Glad)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog glfw ImGui stb_image glm::glm Glad)
 
 project(Glad VERSION 0.0.1 DESCRIPTION "The Magma Engine Glad Build")
 add_library(${PROJECT_NAME} STATIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/src/glad.c)
@@ -109,11 +102,6 @@ add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_rectpack.h
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_textedit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imstb_truetype.h
-    
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_vulkan.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_vulkan.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_glfw.h
@@ -123,4 +111,4 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
-target_link_libraries(${PROJECT_NAME} glfw Vulkan::Vulkan)
+target_link_libraries(${PROJECT_NAME} glfw)

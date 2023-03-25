@@ -69,28 +69,6 @@ namespace Magma
             return m_Window;
         }
 
-        std::vector<const char *> GetVulkanExtensions() const override
-        {
-            uint32_t glfwExtensionCount = 0;
-            const char **glfwExtensions;
-            glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-            std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-#ifdef _DEBUG
-            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
-
-            extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-
-            return extensions;
-        }
-
-        VkResult CreateVulkanWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const override
-        {
-            return glfwCreateWindowSurface(instance, m_Window, nullptr, surface);
-        }
-
         void Update() override
         {
             glfwPollEvents();
