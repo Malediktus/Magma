@@ -56,6 +56,9 @@ namespace Magma
             void *pUserData);
 
         Window *m_Window;
+        std::vector<VkImage> m_SwapChainImages;
+        VkFormat m_SwapChainImageFormat;
+        VkExtent2D m_SwapChainExtent;
         VkSwapchainKHR m_SwapChain;
         VkSurfaceKHR m_Surface;
         VkQueue m_PresentQueue;
