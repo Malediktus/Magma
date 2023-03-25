@@ -2,7 +2,6 @@ add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
 
-find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 
 project(Magma VERSION 0.0.1 DESCRIPTION "The Magma Game Engine Library")
@@ -15,16 +14,6 @@ file (GLOB_RECURSE CORE_SOURCE_FILES
 file (GLOB_RECURSE EVENT_SOURCE_FILES
     "src/Magma/Event/*.cpp"
     "src/Magma/Event/*.h"
-)
-
-file (GLOB_RECURSE PLATFORM_LINUX_SOURCE_FILES
-    "src/Magma/Platform/Linux/*.cpp"
-    "src/Magma/Platform/Linux/*.h"
-)
-
-file (GLOB_RECURSE PLATFORM_WINDOWS_SOURCE_FILES
-    "src/Magma/Platform/Windows/*.cpp"
-    "src/Magma/Platform/Windows/*.h"
 )
 
 file (GLOB_RECURSE PLATFORM_MACOS_SOURCE_FILES
@@ -47,28 +36,31 @@ file (GLOB_RECURSE SCENE_SOURCE_FILES
     "src/Magma/Scene/*.h"
 )
 
+file (GLOB_RECURSE UI_SOURCE_FILES
+    "src/Magma/UI/*.cpp"
+    "src/Magma/UI/*.h"
+)
+
 add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h
     ${CORE_SOURCE_FILES}
     ${EVENT_SOURCE_FILES}
-    ${PLATFORM_LINUX_SOURCE_FILES}
-    ${PLATFORM_WINDOWS_SOURCE_FILES}
     ${PLATFORM_MACOS_SOURCE_FILES}
     ${PLATFORM_OPENGL_SOURCE_FILES}
     ${RENDERER_SOURCE_FILES}
     ${SCENE_SOURCE_FILES}
+    ${UI_SOURCE_FILES}
 )
 
 source_group("Interface" FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/pch.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Magma/Magma.h)
 source_group("Core" FILES ${CORE_SOURCE_FILES})
 source_group("Event" FILES ${EVENT_SOURCE_FILES})
-source_group("Platform/Linux" FILES ${PLATFORM_LINUX_SOURCE_FILES})
-source_group("Platform/Windows" FILES ${PLATFORM_WINDOWS_SOURCE_FILES})
 source_group("Platform/MacOS" FILES ${PLATFORM_MACOS_SOURCE_FILES})
 source_group("Platform/OpenGL" FILES ${PLATFORM_OPENGL_SOURCE_FILES})
 source_group("Renderer" FILES ${RENDERER_SOURCE_FILES})
 source_group("Scene" FILES ${SCENE_SOURCE_FILES})
+source_group("UI" FILES ${UI_SOURCE_FILES})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUG)
