@@ -4,18 +4,18 @@
 #include <Magma/Core/Input.h>
 #include <Magma/Renderer/Renderer.h>
 
-RenderingAPIType currentRenderingAPI = RenderingAPIType::Vulkan;
+RenderingAPIType currentRenderingAPI = RenderingAPIType::OpenGL;
 
 namespace Magma
 {
     const std::vector<Vertex> vertices = {
-        {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}},
-        {{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
         {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}}};
+        {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}},
+        {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+        {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}}};
 
     const std::vector<uint32_t> indices = {
-        0, 1, 3,
+        0, 1, 2,
         1, 2, 3};
 
     Mesh mesh;

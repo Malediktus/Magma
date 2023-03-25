@@ -6,11 +6,15 @@ namespace Magma
 {
     std::shared_ptr<RenderingAPI> RenderCommand::m_RenderingAPI;
     std::shared_ptr<Shader> RenderCommand::m_Shader;
+    std::unique_ptr<Camera> RenderCommand::m_Camera;
 
     void RenderCommand::Init(Window *window)
     {
         m_RenderingAPI = RenderingAPICreate(window);
         m_Shader = ShaderCreate("assets/Base.vert", "assets/Base.frag");
+        m_Camera = std::unique_ptr<Camera>(new Camera(90.0f, window->GetWidth(), window->GetHeight()));
+        m_Camera->Translate(glm::vec3(0.0f, 0.0f, 2.0f));
+        EventDispatcher::Subscribe<WindowResizeEvent>(OnReisze);
     }
 
     void RenderCommand::Shutdown()
@@ -35,7 +39,8 @@ namespace Magma
         std::shared_ptr<IndexBuffer> indexBuffer = IndexBufferCreate(indices);
         m_Shader->Bind();
         m_Shader->UploadInt("TextureId", 0);
-        m_Shader->UploadMat4("uModel", transform);
+        glm::mat modelViewProj = transform * m_Camera->GetViewProj();
+        m_Shader->UploadMat4("uModelViewProj", modelViewProj);
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), false);
@@ -51,5 +56,11 @@ namespace Magma
         vertexBuffer->Bind();
         indexBuffer->Bind();
         m_RenderingAPI->DrawIndexed(indexBuffer->Size(), true);
+    }
+
+    void RenderCommand::OnReisze(const Event &e)
+    {
+        const WindowResizeEvent &resizeEvent = static_cast<const WindowResizeEvent&>(e);
+        m_Camera->UpdateAspectRation(resizeEvent.GetWidth(), resizeEvent.GetHeight());
     }
 }

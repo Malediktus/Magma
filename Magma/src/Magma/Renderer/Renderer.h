@@ -2,6 +2,7 @@
 
 #include <Magma/pch.h>
 #include <Magma/Core/Window.h>
+#include <Magma/Event/Event.h>
 #include <Magma/Renderer/RenderingAPI.h>
 #include <Magma/Renderer/RenderCommand.h>
 #include <Magma/Renderer/Texture2D.h>
@@ -38,5 +39,8 @@ namespace Magma
 
         static void DrawTexture(const Texture2D &texture, const Material &material, const glm::mat4 &transform);
         static void DrawMesh(const Mesh &mesh, const Texture2D &texture, const Material &material, const glm::mat4 &transform);
+        
+    private:
+        static void OnResize(const Event &e);
     };
 }

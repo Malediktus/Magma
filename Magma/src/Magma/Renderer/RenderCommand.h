@@ -2,6 +2,7 @@
 
 #include <Magma/pch.h>
 #include <Magma/Core/Window.h>
+#include <Magma/Scene/Camera.h>
 #include <Magma/Renderer/Renderer.h>
 #include <Magma/Renderer/RenderingAPI.h>
 #include <Magma/Renderer/VertexBuffer.h>
@@ -22,7 +23,10 @@ namespace Magma
         static std::shared_ptr<RenderingAPI> GetRenderingAPI() { return m_RenderingAPI; }
 
     private:
+        static void OnReisze(const Event &e);
+        
         static std::shared_ptr<RenderingAPI> m_RenderingAPI;
         static std::shared_ptr<Shader> m_Shader;
+        static std::unique_ptr<Camera> m_Camera;
     };
 }

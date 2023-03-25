@@ -17,8 +17,8 @@ namespace Magma
         WindowResizeEvent(const int &width, const int &height)
             : m_Width(width), m_Height(height) {}
 
-        const int &GetWidth() { return m_Width; }
-        const int &GetHeight() { return m_Height; }
+        const int &GetWidth() const { return m_Width; }
+        const int &GetHeight() const { return m_Height; }
 
     private:
         const int m_Width;
@@ -35,7 +35,7 @@ namespace Magma
         KeyPressEvent(const KeyCode &keycode)
             : m_KeyCode(keycode) {}
 
-        const KeyCode &GetKeyCode() { return m_KeyCode; }
+        const KeyCode &GetKeyCode() const { return m_KeyCode; }
 
     private:
         const KeyCode m_KeyCode;
@@ -47,7 +47,7 @@ namespace Magma
         KeyReleaseEvent(const KeyCode &keycode)
             : m_KeyCode(keycode) {}
 
-        const KeyCode &GetKeyCode() { return m_KeyCode; }
+        const KeyCode &GetKeyCode() const { return m_KeyCode; }
 
     private:
         const KeyCode m_KeyCode;
@@ -59,7 +59,7 @@ namespace Magma
         KeyRepeatEvent(const KeyCode &keycode)
             : m_KeyCode(keycode) {}
 
-        const KeyCode &GetKeyCode() { return m_KeyCode; }
+        const KeyCode &GetKeyCode() const { return m_KeyCode; }
 
     private:
         const KeyCode m_KeyCode;
@@ -71,8 +71,8 @@ namespace Magma
         MouseMoveEvent(const int &X, const int &Y)
             : m_X(X), m_Y(Y) {}
 
-        const int &GetX() { return m_X; }
-        const int &GetY() { return m_Y; }
+        const int &GetX() const { return m_X; }
+        const int &GetY() const { return m_Y; }
 
     private:
         const int m_X;
@@ -85,7 +85,7 @@ namespace Magma
         MousePressEvent(const KeyCode &keycode)
             : m_KeyCode(keycode) {}
 
-        const KeyCode &GetKeyCode() { return m_KeyCode; }
+        const KeyCode &GetKeyCode() const { return m_KeyCode; }
 
     private:
         const KeyCode m_KeyCode;
@@ -97,7 +97,7 @@ namespace Magma
         MouseReleaseEvent(const KeyCode &keycode)
             : m_KeyCode(keycode) {}
 
-        const KeyCode &GetKeyCode() { return m_KeyCode; }
+        const KeyCode &GetKeyCode() const { return m_KeyCode; }
 
     private:
         const KeyCode m_KeyCode;
@@ -109,7 +109,7 @@ namespace Magma
         MouseScrollEvent(const int &value)
             : m_Value(value) {}
 
-        const int &GetValue() { return m_Value; }
+        const int &GetValue() const { return m_Value; }
 
     private:
         const int m_Value;

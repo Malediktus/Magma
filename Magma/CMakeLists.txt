@@ -81,7 +81,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUG)
 endif()
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_EXPORT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERT)
 target_compile_definitions(${PROJECT_NAME} PRIVATE MG_ASSERTIONS_ENABLED)

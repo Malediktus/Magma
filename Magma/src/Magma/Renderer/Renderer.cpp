@@ -6,6 +6,8 @@ namespace Magma
     {
         RenderCommand::Init(window);
         RenderCommand::SetViewport(0, 0, window->GetWidth(), window->GetHeight());
+        
+        EventDispatcher::Subscribe<WindowResizeEvent>(OnResize);
     }
 
     void Renderer::Shutdown()
@@ -60,5 +62,11 @@ namespace Magma
 
         texture.Bind();
         RenderCommand::DrawIndexed(vertices, mesh.Indicies, transform);
+    }
+
+    void Renderer::OnResize(const Event &e)
+    {
+        const WindowResizeEvent &resizeEvent = static_cast<const WindowResizeEvent&>(e);
+        RenderCommand::SetViewport(0, 0, resizeEvent.GetWidth(), resizeEvent.GetHeight());
     }
 }
