@@ -48,6 +48,7 @@ namespace Magma
         void CreateLogicalDevice(const std::vector<const char *> extensions, const std::vector<const char *> validationLayers);
         void CreateSurface();
         void CreateSwapChain();
+        void CreateImageViews();
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -56,6 +57,7 @@ namespace Magma
             void *pUserData);
 
         Window *m_Window;
+        std::vector<VkImageView> m_SwapChainImageViews;
         std::vector<VkImage> m_SwapChainImages;
         VkFormat m_SwapChainImageFormat;
         VkExtent2D m_SwapChainExtent;
