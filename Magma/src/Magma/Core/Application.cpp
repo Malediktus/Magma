@@ -4,7 +4,7 @@
 #include <Magma/Core/Input.h>
 #include <Magma/Renderer/Renderer.h>
 
-RenderingAPIType currentRenderingAPI = RenderingAPIType::OpenGL;
+RenderingAPIType currentRenderingAPI = RenderingAPIType::Vulkan;
 
 namespace Magma
 {
@@ -50,6 +50,7 @@ namespace Magma
         }
 
         OnShutdown();
+        Renderer::Shutdown();
     }
 
     void Application::OnWindowClose(const Event &)

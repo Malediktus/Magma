@@ -8,6 +8,11 @@ namespace Magma
         RenderCommand::SetViewport(0, 0, window->GetWidth(), window->GetHeight());
     }
 
+    void Renderer::Shutdown()
+    {
+        RenderCommand::Shutdown();
+    }
+
     void Renderer::BeginFrame()
     {
         RenderCommand::Clear({0.0f, 0.0f, 0.0f, 1.0f});
@@ -20,16 +25,14 @@ namespace Magma
     void Renderer::DrawTexture(const Texture2D &texture, const Material &material, const glm::mat4 &transform)
     {
         const std::vector<Vertex> Vertices = {
-            {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}},
-            {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+            {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}},
+            {{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
             {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
-            {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}}
-        };
+            {{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}}};
 
         const std::vector<uint32_t> Indicies = {
             0, 1, 3,
-            1, 2, 3
-        };
+            1, 2, 3};
 
         std::vector<RawVertex> vertices;
         vertices.resize(Vertices.size());
@@ -44,7 +47,7 @@ namespace Magma
         RenderCommand::DrawIndexed(vertices, Indicies, transform);
     }
 
-    void Renderer::DrawMesh(const Mesh& mesh, const Texture2D& texture, const Material& material, const glm::mat4& transform)
+    void Renderer::DrawMesh(const Mesh &mesh, const Texture2D &texture, const Material &material, const glm::mat4 &transform)
     {
         std::vector<RawVertex> vertices;
         vertices.resize(mesh.Vertices.size());

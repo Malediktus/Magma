@@ -2,6 +2,7 @@
 #include <Magma/Core/Platform.h>
 #include <Magma/Renderer/Shader.h>
 #include <Magma/Platform/OpenGL/OpenGLShader.h>
+#include <Magma/Platform/Vulkan/VulkanShader.h>
 
 namespace Magma
 {
@@ -11,6 +12,10 @@ namespace Magma
         {
         case RenderingAPIType::OpenGL:
             return std::shared_ptr<Shader>(new OpenGLShader(vertexShaderFilename, fragmentShaderFilename));
+        case RenderingAPIType::Vulkan:
+            return std::shared_ptr<Shader>(new VulkanShader(vertexShaderFilename, fragmentShaderFilename));
+        default:
+            MG_ASSERT_NO_MSG(false);
         }
     }
 }
