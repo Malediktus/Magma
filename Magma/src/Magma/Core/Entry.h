@@ -1,13 +1,14 @@
 #pragma once
 
+#include <memory>
 #include <Magma/Core/Application.h>
 
-extern Magma::Application* Magma::CreateApplication();
+extern std::shared_ptr<Magma::Application> Magma::CreateApplication();
 
 int main(void)
 {
-    Magma::Application* app = Magma::CreateApplication();
+    std::shared_ptr<Magma::Application> app = Magma::CreateApplication();
     app->Run();
-
+    
     return 0;
 }

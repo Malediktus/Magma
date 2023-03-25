@@ -1,7 +1,5 @@
 #pragma once
 
-// TODO: Make platform indipendent
-
 #include <Magma/Core/Window.h>
 
 #include <imgui.h>
@@ -10,12 +8,12 @@
 
 namespace Magma
 {
-    class DebugUI
-    {
-    public:
-        static void Init(std::shared_ptr<Window> window);
-        static void Shutdow();
-        static void BeginFrame();
-        static void EndFrame();
-    };
+class DebugUI
+{
+public:
+    static void Init(std::shared_ptr<Window> window);
+    static void Shutdow();
+    static void BeginFrame();
+    static void EndFrame();
+};
 }

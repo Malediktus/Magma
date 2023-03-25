@@ -10,7 +10,8 @@
 #define debugBreak() __builtin_trap()
 #endif
 
-void report_assertion_failure(const char *expression, const char *message, const char *file, int line);
+// Defined int Magma/Core/Logger.cpp
+void reportAssertionFailure(const char* expression, const char* message, const char* file, int line);
 
 #define MG_ASSERT_NO_MSG(expr)                                       \
     {                                                                \

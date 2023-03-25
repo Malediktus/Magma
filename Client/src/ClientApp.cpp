@@ -3,22 +3,22 @@
 class SandboxApp : public Magma::Application
 {
 public:
-	SandboxApp() = default;
-	~SandboxApp() = default;
-
-	void OnInit() override
-	{
-	}
-
-	void OnShutdown() override
-	{
-	}
-
-	void OnUpdate() override
-	{
-	}
+    SandboxApp() = default;
+    ~SandboxApp() = default;
     
-    void OnImGuiRender() override
+    void OnInit() override
+    {
+    }
+    
+    void OnShutdown() override
+    {
+    }
+    
+    void OnUpdate() override
+    {
+    }
+    
+    void OnDebugUIRender() override
     {
         ImGui::Begin("Test");
         ImGui::Text("ImGui Test Window");
@@ -26,7 +26,7 @@ public:
     }
 };
 
-Magma::Application* Magma::CreateApplication()
+std::shared_ptr<Magma::Application> Magma::CreateApplication()
 {
-	return new SandboxApp;
+    return std::make_shared<SandboxApp>();
 }

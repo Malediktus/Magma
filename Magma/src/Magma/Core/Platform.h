@@ -37,10 +37,3 @@
 #else
 #error "Unknown platform!"
 #endif
-
-enum RenderingAPIType
-{
-    OpenGL
-};
-
-extern RenderingAPIType currentRenderingAPI; // Defined in Application.cpp

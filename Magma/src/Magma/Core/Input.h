@@ -5,18 +5,16 @@
 
 namespace Magma
 {
-    class Input
-    {
-    public:
-        static void Init(void *WindowEventHandle);
-
-        static bool GetKey(KeyCode key);
-
-        static int GetMouseX();
-        static int GetMouseY();
-        static std::pair<int, int> GetMousePos();
-
-    private:
-        static void *m_WindowEventHandle; // void* because it differs on platforms
-    };
+class Input
+{
+public:
+    static void Init(std::shared_ptr<Window> window);
+    static bool GetKey(KeyCode key);
+    static int GetMouseX();
+    static int GetMouseY();
+    static std::pair<int, int> GetMousePos();
+    
+private:
+    static std::shared_ptr<Window> m_Window;
+};
 }

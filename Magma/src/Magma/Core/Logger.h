@@ -5,18 +5,18 @@
 
 namespace Magma
 {
-    class Logger
-    {
-    public:
-        static void Init();
-
-        inline static std::shared_ptr<spdlog::logger> &GetCoreLogger() { return m_CoreLogger; }
-        inline static std::shared_ptr<spdlog::logger> &GetClientLogger() { return m_ClientLogger; }
-
-    private:
-        static std::shared_ptr<spdlog::logger> m_CoreLogger;
-        static std::shared_ptr<spdlog::logger> m_ClientLogger;
-    };
+class Logger
+{
+public:
+    static void Init();
+    
+    inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
+    inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return m_ClientLogger; }
+    
+private:
+    static std::shared_ptr<spdlog::logger> m_CoreLogger;
+    static std::shared_ptr<spdlog::logger> m_ClientLogger;
+};
 }
 
 #define LOG_CORE_TRACE(...) ::Magma::Logger::GetCoreLogger()->trace(__VA_ARGS__)
