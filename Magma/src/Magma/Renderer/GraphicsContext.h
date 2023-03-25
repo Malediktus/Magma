@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Magma/pch.h>
+
 namespace Magma
 {
 class GraphicsContext

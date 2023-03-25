@@ -17,5 +17,5 @@ public:
     virtual void Update() = 0;
 };
 
-std::shared_ptr<Window> WindowCreate(const std::string &title, unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+std::shared_ptr<Window> WindowCreate(const std::string& title, unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 }

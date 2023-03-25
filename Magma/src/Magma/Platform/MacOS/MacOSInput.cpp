@@ -6,8 +6,8 @@
 #include <Magma/Core/Input.h>
 #include <GLFW/glfw3.h>
 
-namespace Magma
-{
+using namespace Magma;
+
 std::shared_ptr<Window> Input::m_Window;
 
 void Input::Init(std::shared_ptr<Window> window)
@@ -43,7 +43,6 @@ std::pair<int, int> Input::GetMousePos()
     double y;
     glfwGetCursorPos((GLFWwindow *)m_Window->GetNative(), &x, &y);
     return std::make_pair(x, y);
-}
 }
 
 #endif

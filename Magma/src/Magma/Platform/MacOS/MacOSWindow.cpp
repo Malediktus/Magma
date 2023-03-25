@@ -6,6 +6,7 @@
 #include <Magma/Core/Window.h>
 #include <Magma/Core/Application.h>
 #include <Magma/Renderer/GraphicsContext.h>
+#include <Magma/Platform/OpenGL/OpenGLContext.h>
 
 #include <GLFW/glfw3.h>
 
@@ -24,7 +25,8 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         
         m_Window = glfwCreateWindow(width, height, m_Title.c_str(), nullptr, nullptr);
-        glfwMakeContextCurrent(m_Window);
+        m_Context = std::make_shared<OpenGLContext>(m_Window);
+        m_Context->Init();
         
         glfwSetKeyCallback(m_Window, KeyCallback);
         glfwSetMouseButtonCallback(m_Window, ButtonCallback);
@@ -65,7 +67,7 @@ public:
     void Update() override
     {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
     
 protected:

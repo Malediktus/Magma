@@ -11,8 +11,8 @@ class OpenGLContext : public GraphicsContext
 public:
     OpenGLContext(GLFWwindow* windowHandle);
     
-    virtual void Init() = 0;
-    virtual void SwapBuffers() = 0;
+    void Init() override;
+    void SwapBuffers() override;
     
 private:
     GLFWwindow* m_WindowHandle;

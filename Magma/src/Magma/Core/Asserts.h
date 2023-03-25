@@ -20,7 +20,7 @@ void reportAssertionFailure(const char* expression, const char* message, const c
         }                                                            \
         else                                                         \
         {                                                            \
-            report_assertion_failure(#expr, "", __FILE__, __LINE__); \
+            reportAssertionFailure(#expr, "", __FILE__, __LINE__);   \
             debugBreak();                                            \
         }                                                            \
     }
@@ -32,7 +32,7 @@ void reportAssertionFailure(const char* expression, const char* message, const c
         }                                                                 \
         else                                                              \
         {                                                                 \
-            report_assertion_failure(#expr, message, __FILE__, __LINE__); \
+            reportAssertionFailure(#expr, message, __FILE__, __LINE__);   \
             debugBreak();                                                 \
         }                                                                 \
     }
@@ -45,7 +45,7 @@ void reportAssertionFailure(const char* expression, const char* message, const c
         }                                                            \
         else                                                         \
         {                                                            \
-            report_assertion_failure(#expr, "", __FILE__, __LINE__); \
+            reportAssertionFailure(#expr, "", __FILE__, __LINE__);   \
             debugBreak();                                            \
         }                                                            \
     }

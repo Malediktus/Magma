@@ -4,8 +4,8 @@
 #include <Magma/Core/Input.h>
 #include <Magma/UI/DebugUI.h>
 
-namespace Magma
-{
+using namespace Magma;
+
 void Application::Run()
 {
     m_Running = true;
@@ -32,5 +32,4 @@ void Application::Run()
 void Application::OnWindowClose(const Event&)
 {
     m_Running = false;
-}
 }
