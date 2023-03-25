@@ -4,6 +4,7 @@
 
 #include <Magma/Event/Event.h>
 #include <Magma/Core/Window.h>
+#include <Magma/Core/Application.h>
 
 #ifdef MG_VULKAN
 #define GLFW_INCLUDE_VULKAN
@@ -19,19 +20,20 @@ namespace Magma
             : m_Title(title), m_Width(width), m_Height(height)
         {
             glfwInit();
-#ifndef MG_OPENGL
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-#endif
-#ifdef MG_OPENGL
-            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+            if (currentRenderingAPI == RenderingAPIType::Vulkan)
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+            if (currentRenderingAPI == RenderingAPIType::OpenGL)
+            {
+                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            }
+
             m_Window = glfwCreateWindow(m_Width, m_Height, title, nullptr, nullptr);
-#ifdef MG_OPENGL
-            glfwMakeContextCurrent(m_Window);
-#endif
+            if (currentRenderingAPI == RenderingAPIType::OpenGL)
+                glfwMakeContextCurrent(m_Window);
 
             glfwSetKeyCallback(m_Window, KeyCallback);
             glfwSetMouseButtonCallback(m_Window, ButtonCallback);
@@ -71,7 +73,6 @@ namespace Magma
 
         std::vector<const char *> GetVulkanExtensions() const override
         {
-#ifdef MG_VULKAN
             uint32_t glfwExtensionCount = 0;
             const char **glfwExtensions;
             glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -85,17 +86,12 @@ namespace Magma
             extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
             return extensions;
-#else
-            return std::vector<const char *>();
-#endif
         }
 
-#ifdef MG_VULKAN
         VkResult CreateVulkanWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const override
         {
             return glfwCreateWindowSurface(instance, m_Window, nullptr, surface);
         }
-#endif
 
         void Update() override
         {

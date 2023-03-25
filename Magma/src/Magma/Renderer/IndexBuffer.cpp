@@ -2,6 +2,7 @@
 #include <Magma/Core/Platform.h>
 #include <Magma/Renderer/IndexBuffer.h>
 #include <Magma/Platform/OpenGL/OpenGLIndexBuffer.h>
+#include <Magma/Platform/Vulkan/VulkanIndexBuffer.h>
 
 namespace Magma
 {
@@ -11,6 +12,10 @@ namespace Magma
         {
         case RenderingAPIType::OpenGL:
             return std::shared_ptr<IndexBuffer>(new OpenGLIndexBuffer(indices));
+        case RenderingAPIType::Vulkan:
+            return std::shared_ptr<IndexBuffer>(new VulkanIndexBuffer(indices));
+        default:
+            MG_ASSERT_NO_MSG(false);
         }
     }
 }

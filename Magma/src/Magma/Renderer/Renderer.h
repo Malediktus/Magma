@@ -31,6 +31,7 @@ namespace Magma
     {
     public:
         static void Init(Window *window);
+        static void Shutdown();
 
         static void BeginFrame();
         static void EndFrame();
